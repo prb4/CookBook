@@ -1,8 +1,8 @@
 package com.example.customfood.data.remote
 
 import android.util.Log
-import com.example.customfood.data.remote.dto.DataPostRequest
-import com.example.customfood.data.remote.dto.DataPostResponse
+import com.example.customfood.data.remote.dto.DataRecipeRequest
+import com.example.customfood.data.remote.dto.DataRecipeResponse
 import com.example.customfood.data.remote.dto.IRecipeService
 import io.ktor.client.*
 import io.ktor.client.features.*
@@ -15,8 +15,13 @@ class RecipeServiceImplementation(
     val TAG = "CustomFood - RecipeServiceImplementation"
 
     //TODO - remove the list when flipping to recipes
-    override suspend fun getPost(): List<DataPostResponse> {
+    override suspend fun getPost(): DataRecipeResponse {
         Log.d(TAG, "in getPost")
+        return client.get {
+            url(HttpRoutes.POSTS)
+        }
+        //TODO - implement error catching, rewatch end of the Ktor video
+        /*
         return try {
             client.get {
                 url(HttpRoutes.POSTS)
@@ -24,7 +29,7 @@ class RecipeServiceImplementation(
         } catch (e: RedirectResponseException) {
             // 3xx - responses
             println("Error: ${e.response.status.description}")
-            emptyList()
+            DataRecipeResponse
         } catch (e: ClientRequestException) {
             // 4xx - response
             println("Error: ${e.response.status.description}")
@@ -37,11 +42,12 @@ class RecipeServiceImplementation(
             println("Error: ${e.message}")
             emptyList()
         }
+         */
     }
 
-    override suspend fun createPost(postRequest: DataPostRequest): DataPostRequest? {
+    override suspend fun createPost(postRequest: DataRecipeRequest): DataRecipeRequest? {
         return try {
-            client.post<DataPostRequest>() {
+            client.post<DataRecipeRequest>() {
                 url(HttpRoutes.POSTS)
                 contentType(ContentType.Application.Json)
                 body = postRequest

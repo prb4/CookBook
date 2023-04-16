@@ -9,25 +9,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.customfood.data.remote.dto.DataPostResponse
+import com.example.customfood.data.remote.dto.DataRecipeResponse
 import com.example.customfood.data.remote.dto.IRecipeService
-import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
@@ -102,7 +89,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     }
 
 
-    override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataPostResponse>){
+    override fun onFoodTypeItemClick(foodType: DataFoodType, data: DataRecipeResponse){
         Log.d(TAG, "Back in MainActivity after clicking on ${foodType.title}")
         Log.d(TAG, data.toString())
 
