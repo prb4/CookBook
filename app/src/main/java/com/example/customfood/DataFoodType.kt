@@ -1,6 +1,6 @@
 package com.example.customfood
 
-data class FoodOption (
+data class DataFoodType (
     val title: String,
     val image: Int
         )

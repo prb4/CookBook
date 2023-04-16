@@ -1,23 +1,26 @@
 package com.example.customfood
 
-import android.content.ClipData
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.CheckBox
 import android.widget.ImageView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customfood.data.remote.dto.DataPostResponse
+import com.example.customfood.data.remote.dto.IRecipeService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import androidx.lifecycle.lifecycleScope
+import com.example.customfood.ui.WebRequests
 
-class OptionAdapter(
-    val options: List<FoodOption>,
-    private val itemClickListener: IFoodOptionsItemClickListener
-) : RecyclerView.Adapter<OptionAdapter.OptionViewHolder>() {
+class AdapterFoodType(
+    val options: List<DataFoodType>,
+    private val foodTypeClickListener: IFoodTypeItemClickListener
+) : RecyclerView.Adapter<AdapterFoodType.OptionViewHolder>() {
 
-    val TAG = "CustomFoodTAG-OptionAdapter.kt"
-
+    val TAG = "CustomFood - OptionAdapter.kt"
     inner class OptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder {
@@ -36,10 +39,13 @@ class OptionAdapter(
         holder.itemView.setOnClickListener{
             //TODO - Seems like some clicks aren't registered. Maybe the click is landing on the textview?
             Log.d(TAG, "Clicked on ${options[position].title}")
-            itemClickListener.onFoodOptionsItemClick(options[position].title)
+
+            val webRequests = WebRequests()
+            webRequests.startRequest(options[position].title)
+
+            foodTypeClickListener.onFoodTypeItemClick(options[position])
         }
     }
-
     override fun getItemCount(): Int {
         return options.size
     }

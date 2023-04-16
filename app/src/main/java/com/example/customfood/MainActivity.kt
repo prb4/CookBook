@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -19,14 +18,21 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customfood.data.remote.dto.DataPostResponse
+import com.example.customfood.data.remote.dto.IRecipeService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.runBlocking
 
-class MainActivity : ComponentActivity(), IFoodOptionsItemClickListener {
-    val TAG = "CustomFoodTAG"
+class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
+    val TAG = "CustomFood - MainActivity"
+    val FOOD_TYPE : Int = 1
+    private val service = IRecipeService.create()
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,201 +46,82 @@ class MainActivity : ComponentActivity(), IFoodOptionsItemClickListener {
 
             val rvOptions = findViewById<RecyclerView>(R.id.rv_options)
 
-            val foodOptions = mutableListOf<FoodOption>(
-                FoodOption("Main", R.drawable.chicken),
-                FoodOption("Sides", R.drawable.rice),
-                FoodOption("Dessert", R.drawable.dessert)
+            val dataFoodTypes = mutableListOf<DataFoodType>(
+                DataFoodType("Main", R.drawable.chicken),
+                DataFoodType("Sides", R.drawable.rice),
+                DataFoodType("Dessert", R.drawable.dessert)
                 )
 
-            rvOptions.adapter = OptionAdapter(foodOptions, this)
+            rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
             rvOptions.layoutManager = LinearLayoutManager(this)
 
             // End recycler view stuff
-
-            /*
-            val painter = painterResource(id = R.drawable.chicken)
-            val description = "My food description"
-            val title = "My title"
-
-
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-            ) {
-                ImageCard(painter = painter,
-                    contentDescription = description,
-                    title = title)
-            }
-             */
-            /*
-            val foodList = getFoodOptions("MAIN")
-            val foodArray = ArrayList(foodList)
-
-            Intent(this,CheckBox::class.java).also {
-                it.putExtra("EXTRA_FOODLIST", foodArray)
-                startActivityForResult(it, 1)
-            }
-
-             */
-
-
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK && data != null) {
-            val returnedData: SelectedItems =
-                data?.getSerializableExtra("EXTRA_CHECKED_FOODS") as SelectedItems
+        Log.d(TAG, "onActivityResult")
+        if (requestCode == FOOD_TYPE && resultCode == Activity.RESULT_OK && data != null) {
+            val returnedData: DataSelectedItems =
+                data?.getSerializableExtra("EXTRA_FOOD_CHOICE") as DataSelectedItems
 
-            Log.d(TAG, "Selected main items: ${returnedData.toString()}")
-
-            val foodList = getFoodOptions("SIDES")
-            val foodArray = ArrayList(foodList)
-            Intent(this,CheckBox::class.java).also {
-                it.putExtra("EXTRA_FOODLIST", foodArray)
-                startActivityForResult(it, 2)
-            }
-
-        } else if (requestCode == 2 && resultCode == Activity.RESULT_OK && data != null) {
-            val returnedData: SelectedItems =
-                data?.getSerializableExtra("EXTRA_CHECKED_FOODS") as SelectedItems
-
-            Log.d(TAG, "Selected side dish: ${returnedData.toString()}")
+            Log.d(TAG, "Selected items: ${returnedData.toString()}")
+            //TODO - make web request
         }
     }
 
-    fun getFoodOptions(foodType: String):  MutableList<Food>{
-        var foodList : MutableList<Food> = arrayListOf()
+    fun getFoodOptions(foodType: String):  MutableList<DataFoodChoice>{
+        var dataFoodChoiceList : MutableList<DataFoodChoice> = arrayListOf()
         if (foodType == "Main") {
-            foodList = mutableListOf(
-                Food("Chicken", false),
-                Food("Trout", false),
-                Food("Lamb", false),
-                Food("Salmon", false),
-                Food("Pork", false),
-                Food("Steak", false)
+            dataFoodChoiceList = mutableListOf(
+                DataFoodChoice("Chicken", R.integer.FOOD_TYPE_MAIN, false),
+                DataFoodChoice("Trout", R.integer.FOOD_TYPE_MAIN,false),
+                DataFoodChoice("Lamb", R.integer.FOOD_TYPE_MAIN,false),
+                DataFoodChoice("Salmon", R.integer.FOOD_TYPE_MAIN,false),
+                DataFoodChoice("Pork", R.integer.FOOD_TYPE_MAIN,false),
+                DataFoodChoice("Steak", R.integer.FOOD_TYPE_MAIN,false)
             )
         }else if (foodType == "Sides") {
-            foodList = mutableListOf(
-                Food("Rice", false),
-                Food("Beans", false),
-                Food("Asparagus", false),
-                Food("Broccoli", false)
+            dataFoodChoiceList = mutableListOf(
+                DataFoodChoice("Rice", R.integer.FOOD_TYPE_SIDE,false),
+                DataFoodChoice("Beans", R.integer.FOOD_TYPE_SIDE,false),
+                DataFoodChoice("Asparagus", R.integer.FOOD_TYPE_SIDE,false),
+                DataFoodChoice("Broccoli", R.integer.FOOD_TYPE_SIDE,false)
             )
         } else if (foodType == "Dessert") {
-            foodList = mutableListOf(
-                Food("Pie", false),
-                Food("Donut", false),
-                Food("Cheese Cake", false),
-                Food("Ice Cream", false)
+            dataFoodChoiceList = mutableListOf(
+                DataFoodChoice("Pie", R.integer.FOOD_TYPE_DESSERT,false),
+                DataFoodChoice("Donut", R.integer.FOOD_TYPE_DESSERT,false),
+                DataFoodChoice("Cheese Cake", R.integer.FOOD_TYPE_DESSERT,false),
+                DataFoodChoice("Ice Cream", R.integer.FOOD_TYPE_DESSERT,false)
             )
         }
-        Log.d(TAG, "Returning from getFoodOptions with ${foodList.toString()}")
-        return foodList
+        Log.d(TAG, "Returning from getFoodOptions with ${dataFoodChoiceList.toString()}")
+        return dataFoodChoiceList
     }
 
 
-    /*
-    @Composable
-    fun ColorBox(
-        modifier: Modifier = Modifier,
-        updateColor: (Color) -> Unit
-    ) {
-
-        Box(modifier = Modifier
-            .background(Color.Red)
-
-            .clickable {
-                updateColor(
-                    Color(
-                        Random.nextFloat(),
-                        Random.nextFloat(),
-                        Random.nextFloat(),
-                        1f
-                    )
-                )
-            }
-        )
-    }
-    */
-
-    /*
-    @Composable
-    fun Greeting(name: String) {
-        Text(text = "Hello $name!")
-    }
-    */
-
-    /*
-    @Preview(showBackground = true)
-    @Composable
-    fun DefaultPreview() {
-        CustomFoodTheme {
-            Greeting("Android")
+    override fun onFoodTypeItemClick(foodType: DataFoodType){
+        Log.d(TAG, "Back in MainActivity after clicking on ${foodType.title}")
+        val coroutineScope = lifecycleScope // or GlobalScope
+        //TODO - what does the ? mean
+        var response: List<DataPostResponse>? = null
+        val result = coroutineScope.async {
+            // Make web request here
+            response = service.getPost()
         }
-    }
-    */
+
+        Log.d(TAG, response.toString())
+        coroutineScope.cancel()
 
 
-    @Composable
-    fun ImageCard(
-        painter: Painter,
-        contentDescription: String,
-        title: String,
-        modifier: Modifier = Modifier
-    ) {
-        Card(
-            modifier = modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(15.dp),
-            elevation = 5.dp
-        ) {
-            Box(modifier = Modifier.height(200.dp)) {
-                androidx.compose.foundation.Image(
-                    painter = painter,
-                    contentDescription = contentDescription,
-                    contentScale = ContentScale.Crop
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black
-                                ),
-                                startY = 400f //TODO - make this a dynamic number
-                            )
-                        )
-
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(12.dp),
-                    contentAlignment = Alignment.BottomStart
-                ) {
-                    Text(
-                        title,
-                        style = androidx.compose.ui.text.TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    override fun onFoodOptionsItemClick(name: String) {
-        Log.d(TAG, "Back in MainActivity after clicking on $name")
-        val foodList = getFoodOptions(name)
+        val foodList = getFoodOptions(foodType.title)
         Log.d(TAG, foodList.toString())
         val foodArray = ArrayList(foodList)
         Intent(this,CheckBox::class.java).also {
             it.putExtra("EXTRA_FOODLIST", foodArray)
-            startActivityForResult(it, 1)
+            startActivityForResult(it, FOOD_TYPE)
         }
     }
 }

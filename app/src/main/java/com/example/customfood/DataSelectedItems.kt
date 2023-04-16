@@ -1,5 +1,5 @@
 package com.example.customfood
 
-data class SelectedItems (
+data class DataSelectedItems (
     val items: List<String>
         ) : java.io.Serializable

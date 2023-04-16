@@ -1,8 +1,7 @@
 package com.example.customfood
 
-import android.os.Parcelable
-
-data class Food(
+data class DataFoodChoice(
     val title: String,
+    val foodType: Int,
     var isChecked: Boolean
 ) : java.io.Serializable

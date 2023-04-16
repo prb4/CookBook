@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">CustomFood</string>
+    <integer name="FOOD_TYPE_MAIN">0</integer>
+    <integer name="FOOD_TYPE_SIDE">1</integer>
+    <integer name="FOOD_TYPE_DESSERT">2</integer>
 </resources>

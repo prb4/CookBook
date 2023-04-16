@@ -1,23 +1,20 @@
 package com.example.customfood
 
-import android.content.ClipData
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 
-class FoodAdapter(
-    val foods: List<Food>
-) : RecyclerView.Adapter<FoodAdapter.FoodViewHolder>() {
+class AdapterFoodChoice(
+    val dataFoodChoices: List<DataFoodChoice>
+) : RecyclerView.Adapter<AdapterFoodChoice.FoodViewHolder>() {
 
     val TAG = "CustomFoodTAG"
 
     inner class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val checkBox : CheckBox = itemView.findViewById<CheckBox>(R.id.cv_selected)
-        fun bind(item: Food) {
+        fun bind(item: DataFoodChoice) {
             checkBox.text = item.title
             checkBox.isChecked = item.isChecked
             checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -48,15 +45,15 @@ class FoodAdapter(
         }
         */
         //Log.d(TAG, "${foods[position].title} is checked: ${foods[position].isChecked}}")
-        holder.bind(foods[position])
+        holder.bind(dataFoodChoices[position])
     }
 
     override fun getItemCount(): Int {
-        return foods.size
+        return dataFoodChoices.size
     }
 
     fun getCheckedItems(): List<String> {
-        return foods.filter { it.isChecked }.map {it.title}
+        return dataFoodChoices.filter { it.isChecked }.map {it.title}
     }
 
 }
