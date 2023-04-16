@@ -6,20 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.ImageView
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataPostResponse
 import com.example.customfood.data.remote.dto.IRecipeService
-import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
-import androidx.lifecycle.lifecycleScope
-import com.example.customfood.ui.WebRequests
+import kotlinx.coroutines.*
 
 class AdapterFoodType(
     val options: List<DataFoodType>,
     private val foodTypeClickListener: IFoodTypeItemClickListener
 ) : RecyclerView.Adapter<AdapterFoodType.OptionViewHolder>() {
-
+    val service = IRecipeService.create()
     val TAG = "CustomFood - OptionAdapter.kt"
     inner class OptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -39,14 +35,27 @@ class AdapterFoodType(
         holder.itemView.setOnClickListener{
             //TODO - Seems like some clicks aren't registered. Maybe the click is landing on the textview?
             Log.d(TAG, "Clicked on ${options[position].title}")
+            var webRequests : List<DataPostResponse> = emptyList()
+            //var response: List<DataPostResponse>? = null
+            CoroutineScope(Dispatchers.IO).launch {
+                webRequests = downloadChoices(options[position].title)
+                Log.d(TAG, "onBindViewHolder web data: " + webRequests.toString())
+                foodTypeClickListener.onFoodTypeItemClick(options[position], webRequests)
+            }
+            //Log.d(TAG, "onBindViewHolder web data OUTSIDE of coroutine: " + webRequests.toString())
 
-            val webRequests = WebRequests()
-            webRequests.startRequest(options[position].title)
-
-            foodTypeClickListener.onFoodTypeItemClick(options[position])
+            //foodTypeClickListener.onFoodTypeItemClick(options[position])
         }
     }
     override fun getItemCount(): Int {
         return options.size
+    }
+
+    private suspend fun downloadChoices(foodType: String) : List<DataPostResponse>{
+        Log.d(TAG, "in downloadChoices")
+        return withContext(Dispatchers.IO) {
+            service.getPost()
+        }
+
     }
 }

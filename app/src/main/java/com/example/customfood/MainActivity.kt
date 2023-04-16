@@ -102,19 +102,9 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     }
 
 
-    override fun onFoodTypeItemClick(foodType: DataFoodType){
+    override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataPostResponse>){
         Log.d(TAG, "Back in MainActivity after clicking on ${foodType.title}")
-        val coroutineScope = lifecycleScope // or GlobalScope
-        //TODO - what does the ? mean
-        var response: List<DataPostResponse>? = null
-        val result = coroutineScope.async {
-            // Make web request here
-            response = service.getPost()
-        }
-
-        Log.d(TAG, response.toString())
-        coroutineScope.cancel()
-
+        Log.d(TAG, data.toString())
 
         val foodList = getFoodOptions(foodType.title)
         Log.d(TAG, foodList.toString())
