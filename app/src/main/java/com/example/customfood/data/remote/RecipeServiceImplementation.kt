@@ -1,9 +1,7 @@
 package com.example.customfood.data.remote
 
 import android.util.Log
-import com.example.customfood.data.remote.dto.DataRecipeRequest
-import com.example.customfood.data.remote.dto.DataRecipeResponse
-import com.example.customfood.data.remote.dto.IRecipeService
+import com.example.customfood.data.remote.dto.*
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
@@ -15,10 +13,12 @@ class RecipeServiceImplementation(
     val TAG = "CustomFood - RecipeServiceImplementation"
 
     //TODO - remove the list when flipping to recipes
-    override suspend fun getPost(): DataRecipeResponse {
-        Log.d(TAG, "in getPost")
+    override suspend fun getFoodChoices(foodType: String): List<DataFoodChoiceResponse> {
+        Log.d(TAG, "in getFoodChoices")
         return client.get {
-            url(HttpRoutes.POSTS)
+            url(HttpRoutes.TYPES)
+            port = 8000
+            parameter("foodType", foodType)
         }
         //TODO - implement error catching, rewatch end of the Ktor video
         /*
@@ -45,10 +45,10 @@ class RecipeServiceImplementation(
          */
     }
 
-    override suspend fun createPost(postRequest: DataRecipeRequest): DataRecipeRequest? {
+    override suspend fun createPost(postRequest: DataFoodChoicesRequest): DataFoodChoicesRequest? {
         return try {
-            client.post<DataRecipeRequest>() {
-                url(HttpRoutes.POSTS)
+            client.post<DataFoodChoicesRequest>() {
+                url(HttpRoutes.TYPES)
                 contentType(ContentType.Application.Json)
                 body = postRequest
             }

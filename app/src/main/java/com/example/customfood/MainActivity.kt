@@ -13,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customfood.data.remote.dto.DataFoodChoiceResponse
 import com.example.customfood.data.remote.dto.DataRecipeResponse
 import com.example.customfood.data.remote.dto.IRecipeService
 
@@ -89,7 +90,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     }
 
 
-    override fun onFoodTypeItemClick(foodType: DataFoodType, data: DataRecipeResponse){
+    override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataFoodChoiceResponse>){
         Log.d(TAG, "Back in MainActivity after clicking on ${foodType.title}")
         Log.d(TAG, data.toString())
 

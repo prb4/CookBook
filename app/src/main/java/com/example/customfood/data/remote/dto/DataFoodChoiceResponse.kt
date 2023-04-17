@@ -1,7 +1,6 @@
 package com.example.customfood.data.remote.dto
 
 data class DataFoodChoiceResponse(
-    val body: String,
-    val title: String,
-    val userId: Int
+    val item: String,
+    val id: Int
 )

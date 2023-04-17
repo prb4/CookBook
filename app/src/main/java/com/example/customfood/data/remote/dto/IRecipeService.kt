@@ -9,9 +9,9 @@ import io.ktor.client.features.logging.*
 
 interface IRecipeService {
 
-    suspend fun getPost(): DataRecipeResponse
+    suspend fun getFoodChoices(foodType: String): List<DataFoodChoiceResponse>
 
-    suspend fun createPost(postRequest: DataRecipeRequest): DataRecipeRequest?
+    suspend fun createPost(postRequest: DataFoodChoicesRequest): DataFoodChoicesRequest?
 
     companion object {
         fun create(): IRecipeService {

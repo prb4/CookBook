@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.customfood.data.remote.dto.DataRecipeResponse
+import com.example.customfood.data.remote.dto.DataFoodChoiceResponse
 import com.example.customfood.data.remote.dto.IRecipeService
 import kotlinx.coroutines.*
 
@@ -35,8 +35,9 @@ class AdapterFoodType(
         holder.itemView.setOnClickListener{
             //TODO - Seems like some clicks aren't registered. Maybe the click is landing on the textview?
             Log.d(TAG, "Clicked on ${options[position].title}")
-            var webRequests : DataRecipeResponse? = null
+            var webRequests : List<DataFoodChoiceResponse>? = null
             //var response: List<DataPostResponse>? = null
+            //TODO - change to ViewModel?
             CoroutineScope(Dispatchers.IO).launch {
                 webRequests = downloadChoices(options[position].title)
                 Log.d(TAG, "onBindViewHolder web data: " + webRequests.toString())
@@ -51,10 +52,10 @@ class AdapterFoodType(
         return options.size
     }
 
-    private suspend fun downloadChoices(foodType: String) : DataRecipeResponse{
+    private suspend fun downloadChoices(foodType: String) : List<DataFoodChoiceResponse>{
         Log.d(TAG, "in downloadChoices")
         return withContext(Dispatchers.IO) {
-            service.getPost()
+            service.getFoodChoices(foodType)
         }
 
     }
