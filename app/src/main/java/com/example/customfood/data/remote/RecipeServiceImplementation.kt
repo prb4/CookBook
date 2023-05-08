@@ -9,16 +9,23 @@ import io.ktor.http.*
 
 class RecipeServiceImplementation(
     private val client: HttpClient
-) : IRecipeService {
+) : IRestAPIService {
     val TAG = "CustomFood - RecipeServiceImplementation"
 
+    override suspend fun getOptions(): List<DataResponse> {
+        Log.d(TAG, "in getOptions")
+        return client.get {
+            url(HttpRoutes.OPTION)
+            port = HttpRoutes.PORT
+        }
+    }
     //TODO - remove the list when flipping to recipes
-    override suspend fun getFoodChoices(foodType: String): List<DataFoodChoiceResponse> {
+    override suspend fun getFoodChoices(option: String): List<DataItemResponse> {
         Log.d(TAG, "in getFoodChoices")
         return client.get {
-            url(HttpRoutes.TYPES)
-            port = 8000
-            parameter("foodType", foodType)
+            url(HttpRoutes.ITEM)
+            port = HttpRoutes.PORT
+            parameter("item", option)
         }
         //TODO - implement error catching, rewatch end of the Ktor video
         /*
@@ -45,10 +52,11 @@ class RecipeServiceImplementation(
          */
     }
 
-    override suspend fun createPost(postRequest: DataFoodChoicesRequest): DataFoodChoicesRequest? {
+    override suspend fun createPost(postRequest: DataRequest): DataRequest? {
+        //TODO - what does this do? Is it needed?
         return try {
-            client.post<DataFoodChoicesRequest>() {
-                url(HttpRoutes.TYPES)
+            client.post<DataRequest>() {
+                url(HttpRoutes.OPTION)
                 contentType(ContentType.Application.Json)
                 body = postRequest
             }

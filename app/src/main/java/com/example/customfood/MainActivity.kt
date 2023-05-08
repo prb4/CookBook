@@ -13,14 +13,15 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.customfood.data.remote.dto.DataFoodChoiceResponse
-import com.example.customfood.data.remote.dto.DataRecipeResponse
-import com.example.customfood.data.remote.dto.IRecipeService
+import com.example.customfood.data.remote.dto.DataItemResponse
+import com.example.customfood.data.remote.dto.DataResponse
+import com.example.customfood.data.remote.dto.IRestAPIService
+import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
     val FOOD_TYPE : Int = 1
-    private val service = IRecipeService.create()
+    private val service = IRestAPIService.create()
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +40,20 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                 DataFoodType("Sides", R.drawable.rice),
                 DataFoodType("Dessert", R.drawable.dessert)
                 )
+
+            Log.d(TAG, "About to make network call")
+            val coroutineScope = rememberCoroutineScope()
+            var myData by remember { mutableStateOf("") }
+
+            LaunchedEffect(Unit) {
+                val data =
+                    withContext(coroutineScope.coroutineContext) { // launch a coroutine within the scope
+                        downloadOptions() // call the suspend function
+                    } // wait for the result
+
+                myData = data.toString() // update the state with the data
+                Log.d(TAG, "Downloaded options: " + myData)
+            }
 
             rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
             rvOptions.layoutManager = LinearLayoutManager(this)
@@ -89,8 +104,15 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         return dataFoodChoiceList
     }
 
+    private suspend fun downloadOptions() : List<DataResponse>{
+        Log.d(TAG, "in downloadOptions")
+        return service.getOptions()
+        //return withContext(Dispatchers.IO) {
+        //    service.getOptions()
+        //0.}
+    }
 
-    override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataFoodChoiceResponse>){
+    override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataItemResponse>){
         Log.d(TAG, "Back in MainActivity after clicking on ${foodType.title}")
         Log.d(TAG, data.toString())
 
@@ -102,5 +124,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             startActivityForResult(it, FOOD_TYPE)
         }
     }
+
+
 }
 

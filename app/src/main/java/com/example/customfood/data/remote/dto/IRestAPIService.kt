@@ -7,14 +7,15 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 
-interface IRecipeService {
+interface IRestAPIService {
 
-    suspend fun getFoodChoices(foodType: String): List<DataFoodChoiceResponse>
+    suspend fun getFoodChoices(foodType: String): List<DataItemResponse>
 
-    suspend fun createPost(postRequest: DataFoodChoicesRequest): DataFoodChoicesRequest?
+    suspend fun createPost(postRequest: DataRequest): DataRequest?
 
+    suspend fun getOptions(): List<DataResponse>
     companion object {
-        fun create(): IRecipeService {
+        fun create(): IRestAPIService {
             return RecipeServiceImplementation(
                 client = HttpClient(Android) {
                     install(Logging) {
