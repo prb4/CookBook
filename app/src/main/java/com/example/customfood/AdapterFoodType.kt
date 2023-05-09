@@ -22,6 +22,7 @@ class AdapterFoodType(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_card, parent, false)
+        //val view = LayoutInflater.from(parent.context).inflate(R.layout.dual_cards, parent, false)
         return OptionViewHolder(view)
     }
 

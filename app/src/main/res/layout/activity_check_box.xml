@@ -14,8 +14,7 @@
         app:layout_constraintBottom_toTopOf="@+id/button_submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/dual_cards"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <Button

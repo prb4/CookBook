@@ -11,6 +11,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
@@ -56,7 +57,8 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             }
 
             rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
-            rvOptions.layoutManager = LinearLayoutManager(this)
+            //rvOptions.layoutManager = LinearLayoutManager(this)
+            rvOptions.layoutManager = GridLayoutManager(this, 2)
 
             // End recycler view stuff
         }
