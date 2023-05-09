@@ -46,7 +46,8 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             val coroutineScope = rememberCoroutineScope()
             var myData by remember { mutableStateOf("") }
 
-            LaunchedEffect(Unit) {
+            LaunchedEffect(true) {
+                Log.d(TAG, "Calling downloadOptions")
                 val data =
                     withContext(coroutineScope.coroutineContext) { // launch a coroutine within the scope
                         downloadOptions() // call the suspend function
@@ -108,10 +109,9 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
 
     private suspend fun downloadOptions() : List<DataResponse>{
         Log.d(TAG, "in downloadOptions")
-        return service.getOptions()
-        //return withContext(Dispatchers.IO) {
-        //    service.getOptions()
-        //0.}
+        return withContext(Dispatchers.IO) {
+            service.getOptions()
+        }
     }
 
     override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataItemResponse>){
