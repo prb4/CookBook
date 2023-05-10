@@ -8,7 +8,6 @@ import android.widget.TextView
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
-import com.example.customfood.data.remote.dto.DataResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
 import kotlinx.coroutines.*
 

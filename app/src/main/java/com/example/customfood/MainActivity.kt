@@ -7,15 +7,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
-import com.example.customfood.data.remote.dto.DataResponse
+import com.example.customfood.data.remote.dto.DataOptionsResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
 import kotlinx.coroutines.*
 
@@ -23,7 +18,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
     val FOOD_TYPE : Int = 1
     private val service = IRestAPIService.create()
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,19 +38,27 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                 )
 
             Log.d(TAG, "About to make network call")
-            val coroutineScope = rememberCoroutineScope()
-            var myData by remember { mutableStateOf("") }
-
-            LaunchedEffect(true) {
-                Log.d(TAG, "Calling downloadOptions")
-                val data =
-                    withContext(coroutineScope.coroutineContext) { // launch a coroutine within the scope
-                        downloadOptions() // call the suspend function
-                    } // wait for the result
-
-                myData = data.toString() // update the state with the data
-                Log.d(TAG, "Downloaded options: " + myData)
+            //val coroutineScope = rememberCoroutineScope()
+            //var myData by remember { mutableStateOf("") }
+            GlobalScope.launch {
+                val data = downloadOptions()
+                Log.d(TAG, "Prior to logging")
+                Log.d(TAG, "Downloaded options: " + data.toString())
             }
+            /*
+            LaunchedEffect(true) {
+                delay(500)
+                Log.d(TAG, "Calling downloadOptions")
+                val data = downloadOptions()
+
+                //    withContext(coroutineScope.coroutineContext) { // launch a coroutine within the scope
+                 //       downloadOptions() // call the suspend function
+                //} // wait for the result
+
+                //myData = data.toString() // update the state with the data
+                Log.d(TAG, "Downloaded options: " + data.toString())
+            }
+            */
 
             rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
             //rvOptions.layoutManager = LinearLayoutManager(this)
@@ -107,7 +110,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         return dataFoodChoiceList
     }
 
-    private suspend fun downloadOptions() : List<DataResponse>{
+    private suspend fun downloadOptions() : List<String>{
         Log.d(TAG, "in downloadOptions")
         return withContext(Dispatchers.IO) {
             service.getOptions()
