@@ -12,7 +12,7 @@ class RecipeServiceImplementation(
 ) : IRestAPIService {
     val TAG = "CustomFood - RecipeServiceImplementation"
 
-    override suspend fun getOptions(): List<String> {
+    override suspend fun getOptions(): List<DataOptionsResponse> {
         Log.d(TAG, "in getOptions")
         return client.get {
             url(HttpRoutes.OPTION)

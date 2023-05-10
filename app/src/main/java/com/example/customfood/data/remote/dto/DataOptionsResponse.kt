@@ -1,9 +1,9 @@
 package com.example.customfood.data.remote.dto
 import kotlinx.serialization.Serializable
 
-//@Serializable
+@Serializable
 data class DataOptionsResponse(
-    val items: List<String>
-    //val item: String
-    //val id: Int
+    val name: String,
+    val options: List<DataItemResponse>,
+    val image: String?
 )

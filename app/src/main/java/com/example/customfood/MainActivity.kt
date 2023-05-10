@@ -40,25 +40,11 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             Log.d(TAG, "About to make network call")
             //val coroutineScope = rememberCoroutineScope()
             //var myData by remember { mutableStateOf("") }
+            //TODO - this isnt the preferred why, as its utilizing 'launch' in a composition
             GlobalScope.launch {
                 val data = downloadOptions()
-                Log.d(TAG, "Prior to logging")
                 Log.d(TAG, "Downloaded options: " + data.toString())
             }
-            /*
-            LaunchedEffect(true) {
-                delay(500)
-                Log.d(TAG, "Calling downloadOptions")
-                val data = downloadOptions()
-
-                //    withContext(coroutineScope.coroutineContext) { // launch a coroutine within the scope
-                 //       downloadOptions() // call the suspend function
-                //} // wait for the result
-
-                //myData = data.toString() // update the state with the data
-                Log.d(TAG, "Downloaded options: " + data.toString())
-            }
-            */
 
             rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
             //rvOptions.layoutManager = LinearLayoutManager(this)
@@ -110,7 +96,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         return dataFoodChoiceList
     }
 
-    private suspend fun downloadOptions() : List<String>{
+    private suspend fun downloadOptions() : List<DataOptionsResponse>{
         Log.d(TAG, "in downloadOptions")
         return withContext(Dispatchers.IO) {
             service.getOptions()
