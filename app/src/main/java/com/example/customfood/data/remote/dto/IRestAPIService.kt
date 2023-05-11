@@ -13,7 +13,7 @@ interface IRestAPIService {
 
     suspend fun createPost(postRequest: DataRequest): DataRequest?
 
-    suspend fun getOptions(): List<DataOptionsResponse>
+    suspend fun getOptions(): List<DataOptionResponse>
     companion object {
         fun create(): IRestAPIService {
             return RecipeServiceImplementation(

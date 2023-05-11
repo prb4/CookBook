@@ -7,10 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
-import com.example.customfood.data.remote.dto.DataOptionsResponse
+import com.example.customfood.data.remote.dto.DataOptionResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
 import kotlinx.coroutines.*
 
@@ -31,19 +32,20 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
 
             val rvOptions = findViewById<RecyclerView>(R.id.rv_options)
 
-            val dataFoodTypes = mutableListOf<DataFoodType>(
-                DataFoodType("Main", R.drawable.chicken),
-                DataFoodType("Sides", R.drawable.rice),
-                DataFoodType("Dessert", R.drawable.dessert)
-                )
-
-            Log.d(TAG, "About to make network call")
-            //val coroutineScope = rememberCoroutineScope()
-            //var myData by remember { mutableStateOf("") }
-            //TODO - this isnt the preferred why, as its utilizing 'launch' in a composition
-            GlobalScope.launch {
+            val dataFoodTypes = mutableListOf<DataFoodType>()
+            runBlocking {
                 val data = downloadOptions()
-                Log.d(TAG, "Downloaded options: " + data.toString())
+                for (option in data) {
+                    Log.d(TAG, option.name)
+                    //TODO - download image
+                    if (option.name.equals("Main")) {
+                        dataFoodTypes.add(DataFoodType(option.name, R.drawable.chicken))
+                    } else if (option.name.equals("Sides")) {
+                        dataFoodTypes.add(DataFoodType(option.name, R.drawable.rice))
+                    } else if (option.name.equals("Dessert")) {
+                        dataFoodTypes.add(DataFoodType(option.name, R.drawable.dessert))
+                    }
+                }
             }
 
             rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
@@ -96,7 +98,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         return dataFoodChoiceList
     }
 
-    private suspend fun downloadOptions() : List<DataOptionsResponse>{
+    private suspend fun downloadOptions() : List<DataOptionResponse>{
         Log.d(TAG, "in downloadOptions")
         return withContext(Dispatchers.IO) {
             service.getOptions()
