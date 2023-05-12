@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customfood.data.remote.dto.DataItemResponse
 
 class CheckBox (): AppCompatActivity() {
     val TAG = "CustomFoodTAG"
@@ -17,13 +18,13 @@ class CheckBox (): AppCompatActivity() {
         Log.d(TAG, "In CheckBox activity")
         setContentView(R.layout.activity_check_box)
 
-        val dataFoodChoiceList = intent.getSerializableExtra("EXTRA_FOODLIST") as ArrayList<DataFoodChoice>
-        Log.d(TAG, dataFoodChoiceList.toString())
+        val dataItemList = intent.getSerializableExtra("EXTRA_FOODLIST") as List<DataItemResponse>
+        Log.d(TAG, dataItemList.toString())
 
         val rvFood = findViewById<RecyclerView>(R.id.rv_food)
         val submit = findViewById<Button>(R.id.button_submit)
 
-        rvFood.adapter = AdapterFoodChoice(dataFoodChoiceList)
+        rvFood.adapter = AdapterFoodChoice(dataItemList)
         rvFood.layoutManager = LinearLayoutManager(this)
 
         submit.setOnClickListener{

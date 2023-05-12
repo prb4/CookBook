@@ -1,23 +1,27 @@
 package com.example.customfood
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.ImageView
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
+import com.example.customfood.ui.FoodOptions
 import kotlinx.coroutines.*
+import kotlin.system.exitProcess
 
 class AdapterFoodType(
     val options: List<DataFoodType>,
     private val foodTypeClickListener: IFoodTypeItemClickListener
 ) : RecyclerView.Adapter<AdapterFoodType.OptionViewHolder>() {
     val service = IRestAPIService.create()
-    val TAG = "CustomFood - OptionAdapter.kt"
+    val TAG = "CustomFood - AdapterFoodType.kt"
     inner class OptionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder {
@@ -39,12 +43,16 @@ class AdapterFoodType(
             Log.d(TAG, "Clicked on ${options[position].title}")
             var webRequests : List<DataItemResponse>? = null
             //var response: List<DataPostResponse>? = null
-            //TODO - change to ViewModel?
+
+            //TODO - need to return out of this, or do a callback
+            foodTypeClickListener.onFoodTypeItemClick(options[position].title)
+            /*
             CoroutineScope(Dispatchers.IO).launch {
                 webRequests = downloadChoices(options[position].title)
                 Log.d(TAG, "onBindViewHolder web data: " + webRequests.toString())
                 foodTypeClickListener.onFoodTypeItemClick(options[position], webRequests!!)
             }
+             */
             //Log.d(TAG, "onBindViewHolder web data OUTSIDE of coroutine: " + webRequests.toString())
 
             //foodTypeClickListener.onFoodTypeItemClick(options[position])

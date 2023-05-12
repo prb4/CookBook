@@ -8,21 +8,19 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.customfood.data.remote.dto.DataItemResponse
-import com.example.customfood.data.remote.dto.DataOptionResponse
+import com.example.customfood.data.remote.dto.DataOptionsResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
+import com.example.customfood.ui.FoodOptions
 import kotlinx.coroutines.*
-import kotlin.coroutines.coroutineContext
-import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
     val FOOD_TYPE : Int = 1
     private val service = IRestAPIService.create()
-    var foodOptions = listOf<DataOptionResponse>()
+    var foodOptions = listOf<DataOptionsResponse>()
+
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +37,10 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             val dataFoodTypes = mutableListOf<DataFoodType>()
             runBlocking {
                 Log.d(TAG, "Parent: ${kotlin.coroutines.coroutineContext[Job]}")
-                foodOptions = downloadOptions()
+                val foodOptionsClass = FoodOptions()
+                foodOptions = foodOptionsClass.getFoodOptions("tset")
+                Log.d(TAG, "Options: " + foodOptions.size)
+                //foodOptions = downloadOptions()
                 for (option in foodOptions) {
                     Log.d(TAG, option.name)
                     //TODO - download image
@@ -82,8 +83,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     }
 
     fun getFoodOptions(foodType: String):  MutableList<DataFoodChoice>{
-        Log.d(TAG, "Do we still have the options: " + foodOptions.toString())
-        exitProcess(-2)
+        //Log.d(TAG, "Do we still have the options: " + foodOptions.toString())
         var dataFoodChoiceList : MutableList<DataFoodChoice> = arrayListOf()
         if (foodType == "Main") {
             dataFoodChoiceList = mutableListOf(
@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         return dataFoodChoiceList
     }
 
-    private suspend fun downloadOptions() : List<DataOptionResponse>{
+    private suspend fun downloadOptions() : List<DataOptionsResponse>{
         Log.d(TAG, "in downloadOptions")
         return service.getOptions()
     }
@@ -123,8 +123,22 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         return IRestAPIService.create().getImage(image)
     }
 
-    override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataItemResponse>){
-        Log.d(TAG, "Back in MainActivity after clicking on ${foodType.title}")
+    override fun onFoodTypeItemClick(foodOption: String) {
+        Log.d(TAG, "Back in MainActivity after clicking on ${foodOption}")
+
+        for (option in foodOptions) {
+            if (option.name.equals(foodOption)) {
+                Log.d(TAG, "Found ${option.name}")
+                val dataItemResponseList = option.items
+                Log.d(TAG, "Packaging ${dataItemResponseList.toString()}")
+                Intent(this, CheckBox::class.java).also {
+                    it.putExtra("EXTRA_FOODLIST", dataItemResponseList as java.io.Serializable)
+                    Log.d(TAG, "Starting activity: Checkbox")
+                    startActivityForResult(it, FOOD_TYPE)
+                }
+            }
+        }
+        /*
         Log.d(TAG, data.toString())
 
         val foodList = getFoodOptions(foodType.title)
@@ -134,8 +148,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             it.putExtra("EXTRA_FOODLIST", foodArray)
             startActivityForResult(it, FOOD_TYPE)
         }
+         */
     }
-
-
 }
 
