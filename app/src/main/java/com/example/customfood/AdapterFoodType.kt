@@ -32,7 +32,7 @@ class AdapterFoodType(
         Log.d(TAG, "Position: ${position}, Title: ${options[position].title}")
         //TODO - Make the cardview's closer together, maybe move away from a constraint layout?
         holder.itemView.findViewById<TextView>(R.id.tv_description).text = options[position].title
-        holder.itemView.findViewById<ImageView>(R.id.iv_img).setImageResource(options[position].image)
+        holder.itemView.findViewById<ImageView>(R.id.iv_img).setImageBitmap(options[position].image)
 
         holder.itemView.setOnClickListener{
             //TODO - Seems like some clicks aren't registered. Maybe the click is landing on the textview?

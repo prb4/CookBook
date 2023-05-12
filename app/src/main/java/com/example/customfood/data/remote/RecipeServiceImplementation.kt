@@ -1,11 +1,17 @@
 package com.example.customfood.data.remote
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import com.example.customfood.data.remote.dto.*
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlin.coroutines.coroutineContext
+import kotlin.system.exitProcess
 
 class RecipeServiceImplementation(
     private val client: HttpClient
@@ -17,6 +23,33 @@ class RecipeServiceImplementation(
         return client.get {
             url(HttpRoutes.OPTION)
             port = HttpRoutes.PORT
+        }
+    }
+
+    override suspend fun getImage(image: String): Bitmap {
+        Log.d(TAG, "in getImage: " + image)
+        Log.d(TAG, "Parent: ${coroutineContext[Job]}")
+        try {
+            val response = client.get<ByteArray> {
+                url(HttpRoutes.IMAGE)
+                parameter("image", image)
+                port = HttpRoutes.PORT
+                headers {
+                    append(HttpHeaders.Accept, "image/gif")
+                }
+            }
+            Log.d(TAG, "Got raw image: " + image)
+            val bitmap = BitmapFactory.decodeByteArray(response, 0, response.size)
+            client.close()
+
+            return bitmap
+        }catch(e: CancellationException){
+            Log.d(TAG, "Throwing...")
+            throw e
+        }catch(e: Exception){
+            Log.d(TAG, "Exception - Parent: ${kotlin.coroutines.coroutineContext[Job]}")
+            exitProcess(-1)
+
         }
     }
     //TODO - remove the list when flipping to recipes

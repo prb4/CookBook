@@ -3,6 +3,7 @@ package com.example.customfood
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -14,11 +15,14 @@ import com.example.customfood.data.remote.dto.DataItemResponse
 import com.example.customfood.data.remote.dto.DataOptionResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
 import kotlinx.coroutines.*
+import kotlin.coroutines.coroutineContext
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
     val FOOD_TYPE : Int = 1
     private val service = IRestAPIService.create()
+    var foodOptions = listOf<DataOptionResponse>()
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,20 +38,29 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
 
             val dataFoodTypes = mutableListOf<DataFoodType>()
             runBlocking {
-                val data = downloadOptions()
-                for (option in data) {
+                Log.d(TAG, "Parent: ${kotlin.coroutines.coroutineContext[Job]}")
+                foodOptions = downloadOptions()
+                for (option in foodOptions) {
                     Log.d(TAG, option.name)
                     //TODO - download image
-                    if (option.name.equals("Main")) {
-                        dataFoodTypes.add(DataFoodType(option.name, R.drawable.chicken))
-                    } else if (option.name.equals("Sides")) {
-                        dataFoodTypes.add(DataFoodType(option.name, R.drawable.rice))
-                    } else if (option.name.equals("Dessert")) {
-                        dataFoodTypes.add(DataFoodType(option.name, R.drawable.dessert))
+                    if (!option.image.isNullOrEmpty()) {
+                        val job = GlobalScope.launch (Dispatchers.Default) {
+                            Log.d(TAG, "Downloading image: " + option.image)
+                            val image = downloadImage(option.image)
+                            Log.d(TAG, "Image size: " + image.byteCount.toString())
+                            dataFoodTypes.add(DataFoodType(option.name, image))
+                        }
+                        runBlocking {
+                            job.join()
+                            job.cancel()
+                            Log.d(TAG, "Successfully downloaded image for " + option.name)
+                        }
                     }
+                    Log.d(TAG, "Adding " + option.name + " to dataFoodType")
                 }
             }
 
+            Log.d(TAG, "Outside of runBlock")
             rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
             //rvOptions.layoutManager = LinearLayoutManager(this)
             rvOptions.layoutManager = GridLayoutManager(this, 2)
@@ -69,6 +82,8 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     }
 
     fun getFoodOptions(foodType: String):  MutableList<DataFoodChoice>{
+        Log.d(TAG, "Do we still have the options: " + foodOptions.toString())
+        exitProcess(-2)
         var dataFoodChoiceList : MutableList<DataFoodChoice> = arrayListOf()
         if (foodType == "Main") {
             dataFoodChoiceList = mutableListOf(
@@ -100,9 +115,12 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
 
     private suspend fun downloadOptions() : List<DataOptionResponse>{
         Log.d(TAG, "in downloadOptions")
-        return withContext(Dispatchers.IO) {
-            service.getOptions()
-        }
+        return service.getOptions()
+    }
+
+    private suspend fun downloadImage(image: String) : Bitmap{
+        Log.d(TAG, "in downloadImage: " + image)
+        return IRestAPIService.create().getImage(image)
     }
 
     override fun onFoodTypeItemClick(foodType: DataFoodType, data: List<DataItemResponse>){

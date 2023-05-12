@@ -1,5 +1,6 @@
 package com.example.customfood.data.remote.dto
 
+import android.graphics.Bitmap
 import com.example.customfood.data.remote.RecipeServiceImplementation
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
@@ -14,6 +15,8 @@ interface IRestAPIService {
     suspend fun createPost(postRequest: DataRequest): DataRequest?
 
     suspend fun getOptions(): List<DataOptionResponse>
+
+    suspend fun getImage(image: String): Bitmap
     companion object {
         fun create(): IRestAPIService {
             return RecipeServiceImplementation(
