@@ -81,38 +81,6 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             //TODO - make web request
         }
     }
-
-    fun getFoodOptions(foodType: String):  MutableList<DataFoodChoice>{
-        //Log.d(TAG, "Do we still have the options: " + foodOptions.toString())
-        var dataFoodChoiceList : MutableList<DataFoodChoice> = arrayListOf()
-        if (foodType == "Main") {
-            dataFoodChoiceList = mutableListOf(
-                DataFoodChoice("Chicken", R.integer.FOOD_TYPE_MAIN, false),
-                DataFoodChoice("Trout", R.integer.FOOD_TYPE_MAIN,false),
-                DataFoodChoice("Lamb", R.integer.FOOD_TYPE_MAIN,false),
-                DataFoodChoice("Salmon", R.integer.FOOD_TYPE_MAIN,false),
-                DataFoodChoice("Pork", R.integer.FOOD_TYPE_MAIN,false),
-                DataFoodChoice("Steak", R.integer.FOOD_TYPE_MAIN,false)
-            )
-        }else if (foodType == "Sides") {
-            dataFoodChoiceList = mutableListOf(
-                DataFoodChoice("Rice", R.integer.FOOD_TYPE_SIDE,false),
-                DataFoodChoice("Beans", R.integer.FOOD_TYPE_SIDE,false),
-                DataFoodChoice("Asparagus", R.integer.FOOD_TYPE_SIDE,false),
-                DataFoodChoice("Broccoli", R.integer.FOOD_TYPE_SIDE,false)
-            )
-        } else if (foodType == "Dessert") {
-            dataFoodChoiceList = mutableListOf(
-                DataFoodChoice("Pie", R.integer.FOOD_TYPE_DESSERT,false),
-                DataFoodChoice("Donut", R.integer.FOOD_TYPE_DESSERT,false),
-                DataFoodChoice("Cheese Cake", R.integer.FOOD_TYPE_DESSERT,false),
-                DataFoodChoice("Ice Cream", R.integer.FOOD_TYPE_DESSERT,false)
-            )
-        }
-        Log.d(TAG, "Returning from getFoodOptions with ${dataFoodChoiceList.toString()}")
-        return dataFoodChoiceList
-    }
-
     private suspend fun downloadOptions() : List<DataOptionsResponse>{
         Log.d(TAG, "in downloadOptions")
         return service.getOptions()

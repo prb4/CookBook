@@ -10,10 +10,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 class AdapterFoodChoice(
     val dataItemResponses: List<DataItemResponse>
@@ -26,26 +23,40 @@ class AdapterFoodChoice(
         val imageView : ImageView = itemView.findViewById<ImageView>(R.id.iv_img)
         fun bind(item: DataItemResponse) {
             Log.d(TAG, "in FoodViewHolder.bind")
-            var image = Bitmap.createBitmap(0, 0, Bitmap.Config.ARGB_8888)
+            //var image = Bitmap.createBitmap(0, 0, Bitmap.Config.ARGB_8888)
             //val dataFoodType = mutableListOf<DataFoodType>()
             checkBox.text = item.name
 
+            //TODO - pull this out of the function so its not called multiple times
             val job = GlobalScope.launch (Dispatchers.Default) {
-                Log.d(TAG, "Downloading image: " + item.image)
-                image = downloadImage(item.image)
-                //dataFoodType.add(DataFoodType(item.name, image))
+                val image = async {
+                    Log.d(TAG, "Downloading image: " + item.image)
+                    downloadImage(item.image)
+                    //dataFoodType.add(DataFoodType(item.name, image))
+                }.await()
+                imageView.setImageBitmap(image)
+                Log.d(TAG, "${item.image} is checked: ${item.isChecked}")
+                if (item.isChecked.equals("true")){
+                    checkBox.isChecked = true
+                    item.isChecked.equals("false")
+                } else {
+                    checkBox.isChecked = false
+                    item.isChecked.equals("true")
+                }
+                checkBox.setOnCheckedChangeListener { _, isChecked ->
+                    if (item.isChecked.equals("true")){
+                        item.isChecked = "false"
+                    } else {
+                        item.isChecked = "true"
+                    }
+                    Log.d(TAG, "${item.name} was checked to ${item.isChecked}")
+                }
+                Log.d(TAG, "${item.name} is NOW checked: ${item.isChecked}")
             }
             runBlocking {
                 job.join()
                 job.cancel()
                 Log.d(TAG, "Successfully downloaded image for " + item.name)
-            }
-
-
-            imageView.setImageBitmap(image)
-            checkBox.isChecked = item.isChecked.equals("true")
-            checkBox.setOnCheckedChangeListener { _, isChecked ->
-                item.isChecked = item.isChecked
             }
         }
 

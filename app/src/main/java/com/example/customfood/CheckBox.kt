@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
 
 class CheckBox (): AppCompatActivity() {
-    val TAG = "CustomFoodTAG"
+    val TAG = "CustomFood - CheckBox"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //TODO - remove bar at top of screen
