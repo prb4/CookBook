@@ -17,6 +17,10 @@ interface IRestAPIService {
     suspend fun getOptions(): List<DataOptionsResponse>
 
     suspend fun getImage(image: String): Bitmap
+
+    suspend fun getRecipe(ingredients: List<String>){
+
+    }
     companion object {
         fun create(): IRestAPIService {
             return RecipeServiceImplementation(

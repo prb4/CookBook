@@ -26,6 +26,14 @@ class RecipeServiceImplementation(
         }
     }
 
+    override suspend fun getRecipe(ingredients: List<String>){
+        Log.d(TAG, "in getRecipe")
+        return client.get {
+            url(HttpRoutes.RECIPE)
+            port = HttpRoutes.PORT
+            parameter("whitelist", ingredients)
+        }
+    }
     override suspend fun getImage(image: String): Bitmap {
         Log.d(TAG, "in getImage: " + image)
         Log.d(TAG, "Parent: ${coroutineContext[Job]}")

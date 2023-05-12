@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,6 +21,8 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val FOOD_TYPE : Int = 1
     private val service = IRestAPIService.create()
     var foodOptions = listOf<DataOptionsResponse>()
+    //var ingredients = List<DataSelectedItems>
+    var ingredients : List<String> = listOf()
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +36,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             setContentView(R.layout.activity_main)
 
             val rvOptions = findViewById<RecyclerView>(R.id.rv_options)
+            val submit = findViewById<Button>(R.id.button_submit)
 
             val dataFoodTypes = mutableListOf<DataFoodType>()
             runBlocking {
@@ -67,6 +71,13 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             rvOptions.layoutManager = GridLayoutManager(this, 2)
 
             // End recycler view stuff
+
+            submit.setOnClickListener{
+                Log.d(TAG, "Submit Button Clicked in OnCreate")
+                runBlocking {
+                    val result = IRestAPIService.create().getRecipe(ingredients)
+                }
+            }
         }
     }
 
@@ -74,16 +85,16 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "onActivityResult")
         if (requestCode == FOOD_TYPE && resultCode == Activity.RESULT_OK && data != null) {
-            val returnedData: DataSelectedItems =
-                data?.getSerializableExtra("EXTRA_FOOD_CHOICE") as DataSelectedItems
+            //val returnedData: DataSelectedItems =
+            //    data?.getSerializableExtra("EXTRA_FOOD_CHOICE") as DataSelectedItems
+            Log.d(TAG, "Getting choices...")
+            val returnedData = data.getStringArrayListExtra("EXTRA_FOOD_CHOICE")
 
             Log.d(TAG, "Selected items: ${returnedData.toString()}")
+            ingredients = ingredients + returnedData!!.toList()
+            Log.d(TAG, "All items: ${ingredients.toString()}")
             //TODO - make web request
         }
-    }
-    private suspend fun downloadOptions() : List<DataOptionsResponse>{
-        Log.d(TAG, "in downloadOptions")
-        return service.getOptions()
     }
 
     private suspend fun downloadImage(image: String) : Bitmap{
@@ -106,17 +117,6 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                 }
             }
         }
-        /*
-        Log.d(TAG, data.toString())
-
-        val foodList = getFoodOptions(foodType.title)
-        Log.d(TAG, foodList.toString())
-        val foodArray = ArrayList(foodList)
-        Intent(this,CheckBox::class.java).also {
-            it.putExtra("EXTRA_FOODLIST", foodArray)
-            startActivityForResult(it, FOOD_TYPE)
-        }
-         */
     }
 }
 

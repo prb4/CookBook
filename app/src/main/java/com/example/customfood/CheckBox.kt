@@ -31,14 +31,15 @@ class CheckBox (): AppCompatActivity() {
             Log.d(TAG, "Submit Button Clicked")
             val adapter = rvFood.adapter as AdapterFoodChoice
             val checkedItems = adapter.getCheckedItems()
-            Log.d(TAG, "Checked items: $checkedItems")
+            val arrayCheckedItems : ArrayList<String> = ArrayList(checkedItems)
+            Log.d(TAG, "Checked items: ${arrayCheckedItems.size}")
 
             val resultIntent = Intent()
-            val dataSelectedItems = DataSelectedItems(checkedItems)
-            resultIntent.putExtra("EXTRA_FOOD_CHOICE", dataSelectedItems)
+            //val dataSelectedItems = DataSelectedItems(checkedItems)
+            //resultIntent.putExtra("EXTRA_FOOD_CHOICE", ArrayList<String>(checkedItems))
+            resultIntent.putStringArrayListExtra("EXTRA_FOOD_CHOICE", arrayCheckedItems)
             setResult(Activity.RESULT_OK, resultIntent)
             finish()
-
         }
     }
 }
