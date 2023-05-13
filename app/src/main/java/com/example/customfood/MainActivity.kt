@@ -23,6 +23,9 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     var foodOptions = listOf<DataOptionsResponse>()
     //var ingredients = List<DataSelectedItems>
     var ingredients : List<String> = listOf()
+    var ignoreIngredients : List<String> = listOf()
+    var userId : String = ""
+    var original_recipe : Boolean = true
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,7 +78,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             submit.setOnClickListener{
                 Log.d(TAG, "Submit Button Clicked in OnCreate")
                 runBlocking {
-                    val result = IRestAPIService.create().getRecipe(ingredients)
+                    val result = IRestAPIService.create().getRecipe(ingredients, ignoreIngredients, userId, original_recipe)
                 }
             }
         }
@@ -87,12 +90,17 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         if (requestCode == FOOD_TYPE && resultCode == Activity.RESULT_OK && data != null) {
             //val returnedData: DataSelectedItems =
             //    data?.getSerializableExtra("EXTRA_FOOD_CHOICE") as DataSelectedItems
-            Log.d(TAG, "Getting choices...")
-            val returnedData = data.getStringArrayListExtra("EXTRA_FOOD_CHOICE")
+            val selectedIngredients = data.getStringArrayListExtra("EXTRA_INGREDIENTS")
+            val avoidIngredients = data.getStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS")
 
-            Log.d(TAG, "Selected items: ${returnedData.toString()}")
-            ingredients = ingredients + returnedData!!.toList()
-            Log.d(TAG, "All items: ${ingredients.toString()}")
+            Log.d(TAG, "Selected items: ${selectedIngredients.toString()}")
+            Log.d(TAG, "Avoid items: ${avoidIngredients.toString()}")
+
+            ingredients = ingredients + selectedIngredients!!.toList()
+            ignoreIngredients = ignoreIngredients + avoidIngredients!!.toList()
+
+            Log.d(TAG, "All selected items: ${ingredients.toString()}")
+            Log.d(TAG, "All ignored items: ${ignoreIngredients.toString()}")
             //TODO - make web request
         }
     }

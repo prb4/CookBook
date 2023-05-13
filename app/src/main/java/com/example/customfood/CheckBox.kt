@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
@@ -24,21 +25,31 @@ class CheckBox (): AppCompatActivity() {
         val rvFood = findViewById<RecyclerView>(R.id.rv_food)
         val submit = findViewById<Button>(R.id.button_submit)
 
+        Log.d(TAG, "Creating adapter")
         rvFood.adapter = AdapterFoodChoice(dataItemList)
-        rvFood.layoutManager = LinearLayoutManager(this)
+        Log.d(TAG, "Creating grid layout")
+        //rvFood.layoutManager = LinearLayoutManager(this)
+        rvFood.layoutManager = GridLayoutManager(this, 2)
+        Log.d(TAG, "Grid layout configured")
 
         submit.setOnClickListener{
             Log.d(TAG, "Submit Button Clicked")
             val adapter = rvFood.adapter as AdapterFoodChoice
-            val checkedItems = adapter.getCheckedItems()
+
+            val checkedItems = adapter.getSelectedItems()
+            val ignoreItems = adapter.getIgnoreItems()
+
             val arrayCheckedItems : ArrayList<String> = ArrayList(checkedItems)
+            val arrayIgnoreItems : ArrayList<String> = ArrayList(ignoreItems)
+
             Log.d(TAG, "Checked items: ${arrayCheckedItems.size}")
 
             val resultIntent = Intent()
-            //val dataSelectedItems = DataSelectedItems(checkedItems)
-            //resultIntent.putExtra("EXTRA_FOOD_CHOICE", ArrayList<String>(checkedItems))
-            resultIntent.putStringArrayListExtra("EXTRA_FOOD_CHOICE", arrayCheckedItems)
+
+            resultIntent.putStringArrayListExtra("EXTRA_INGREDIENTS", arrayCheckedItems)
+            resultIntent.putStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS", arrayIgnoreItems)
             setResult(Activity.RESULT_OK, resultIntent)
+
             finish()
         }
     }
