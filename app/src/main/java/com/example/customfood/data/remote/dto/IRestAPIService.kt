@@ -10,11 +10,17 @@ import io.ktor.client.features.logging.*
 
 interface IRestAPIService {
 
-    suspend fun getFoodChoices(foodType: String): List<DataItemResponse>
+    //suspend fun getFoodChoices(foodType: String): List<DataItemResponse>
 
     suspend fun createPost(postRequest: DataRequest): DataRequest?
 
     suspend fun getOptions(): List<DataOptionsResponse>
+
+    suspend fun getItems(option: String): List<DataItemResponse>
+
+    suspend fun getItem(item: String): DataItemResponse
+
+    suspend fun getOption(option: String): DataOptionsResponse
 
     suspend fun getImage(image: String): Bitmap
 

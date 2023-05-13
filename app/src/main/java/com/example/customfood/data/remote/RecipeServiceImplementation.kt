@@ -21,11 +21,35 @@ class RecipeServiceImplementation(
     override suspend fun getOptions(): List<DataOptionsResponse> {
         Log.d(TAG, "in getOptions")
         return client.get {
-            url(HttpRoutes.OPTION)
+            url(HttpRoutes.OPTIONS)
             port = HttpRoutes.PORT
         }
     }
+    override suspend fun getOption(option: String): DataOptionsResponse {
+        Log.d(TAG, "in getOption")
+        return client.get {
+            url(HttpRoutes.OPTION)
+            port = HttpRoutes.PORT
+            parameter("option", option)
+        }
+    }
 
+    override suspend fun getItems(option: String): List<DataItemResponse> {
+        Log.d(TAG, "in getItems")
+        return client.get {
+            url(HttpRoutes.ITEMS)
+            port = HttpRoutes.PORT
+            parameter("option", option)
+        }
+    }
+    override suspend fun getItem(item: String): DataItemResponse {
+        Log.d(TAG, "in getItem")
+        return client.get {
+            url(HttpRoutes.ITEM)
+            port = HttpRoutes.PORT
+            parameter("item", item)
+        }
+    }
     override suspend fun getRecipe(ingredients: List<String>, ignore: List<String>, userId: String, original: Boolean){
         Log.d(TAG, "in getRecipe")
         return client.get {
@@ -64,6 +88,7 @@ class RecipeServiceImplementation(
         }
     }
     //TODO - remove the list when flipping to recipes
+    /*
     override suspend fun getFoodChoices(option: String): List<DataItemResponse> {
         Log.d(TAG, "in getFoodChoices")
         return client.get {
@@ -95,6 +120,7 @@ class RecipeServiceImplementation(
         }
          */
     }
+    */
 
     override suspend fun createPost(postRequest: DataRequest): DataRequest? {
         //TODO - what does this do? Is it needed?

@@ -13,15 +13,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataOptionsResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
-import com.example.customfood.ui.FoodOptions
+import com.example.customfood.ui.ManageData
+import com.example.customfood.ui.Util
 import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
-    val FOOD_TYPE : Int = 1
-    private val service = IRestAPIService.create()
     var foodOptions = listOf<DataOptionsResponse>()
-    //var ingredients = List<DataSelectedItems>
     var ingredients : List<String> = listOf()
     var ignoreIngredients : List<String> = listOf()
     var userId : String = ""
@@ -41,34 +39,28 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             val rvOptions = findViewById<RecyclerView>(R.id.rv_options)
             val submit = findViewById<Button>(R.id.button_submit)
 
+            val manageData = ManageData()
             val dataFoodTypes = mutableListOf<DataFoodType>()
+
+            foodOptions = manageData.getOptions()
+
             runBlocking {
-                Log.d(TAG, "Parent: ${kotlin.coroutines.coroutineContext[Job]}")
-                val foodOptionsClass = FoodOptions()
-                foodOptions = foodOptionsClass.getFoodOptions("tset")
                 Log.d(TAG, "Options: " + foodOptions.size)
-                //foodOptions = downloadOptions()
                 for (option in foodOptions) {
                     Log.d(TAG, option.name)
-                    //TODO - download image
-                    if (!option.image.isNullOrEmpty()) {
-                        val job = GlobalScope.launch (Dispatchers.Default) {
-                            Log.d(TAG, "Downloading image: " + option.image)
-                            val image = downloadImage(option.image)
-                            Log.d(TAG, "Image size: " + image.byteCount.toString())
-                            dataFoodTypes.add(DataFoodType(option.name, image))
-                        }
-                        runBlocking {
-                            job.join()
-                            job.cancel()
-                            Log.d(TAG, "Successfully downloaded image for " + option.name)
-                        }
-                    }
-                    Log.d(TAG, "Adding " + option.name + " to dataFoodType")
+
+                    val image = manageData.getOptionImage(option)
+                    dataFoodTypes.add(DataFoodType(option.name, image))
+                    Log.d(TAG, "Successfully retrived image for " + option.name)
                 }
             }
 
-            Log.d(TAG, "Outside of runBlock")
+            CoroutineScope(Dispatchers.IO).launch{
+                for (option in foodOptions){
+                    manageData.getItems(option)
+                }
+            }.cancel()
+
             rvOptions.adapter = AdapterFoodType(dataFoodTypes, this)
             //rvOptions.layoutManager = LinearLayoutManager(this)
             rvOptions.layoutManager = GridLayoutManager(this, 2)
@@ -87,7 +79,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         Log.d(TAG, "onActivityResult")
-        if (requestCode == FOOD_TYPE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == R.integer.FOOD_TYPE && resultCode == Activity.RESULT_OK && data != null) {
             //val returnedData: DataSelectedItems =
             //    data?.getSerializableExtra("EXTRA_FOOD_CHOICE") as DataSelectedItems
             val selectedIngredients = data.getStringArrayListExtra("EXTRA_INGREDIENTS")
@@ -121,7 +113,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                 Intent(this, CheckBox::class.java).also {
                     it.putExtra("EXTRA_FOODLIST", dataItemResponseList as java.io.Serializable)
                     Log.d(TAG, "Starting activity: Checkbox")
-                    startActivityForResult(it, FOOD_TYPE)
+                    startActivityForResult(it, R.integer.FOOD_TYPE)
                 }
             }
         }

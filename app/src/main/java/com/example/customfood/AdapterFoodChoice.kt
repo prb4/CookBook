@@ -38,8 +38,9 @@ class AdapterFoodChoice(
             //TODO - pull this out of the function so its not called multiple times
             val job = GlobalScope.launch (Dispatchers.Default) {
                 val image = async {
-                    Log.d(TAG, "Downloading image: " + item.image)
-                    downloadImage(item.image)
+                    //TODO - want to remove this from this location
+                    Log.d(TAG, "Downloading image: " + item.image_name)
+                    downloadImage(item.image_name)
                     //dataFoodType.add(DataFoodType(item.name, image))
                 }.await()
                 imageView.setImageBitmap(image)
@@ -64,7 +65,7 @@ class AdapterFoodChoice(
                     } else if (item.isChecked.equals("ignore")) {
                         item.isChecked = "blank"
                         cardView.setCardBackgroundColor(
-                            Color.TRANSPARENT
+                            Color.WHITE
                         )
                     }
                     Log.d(TAG, "${item.name} was checked to ${item.isChecked}")

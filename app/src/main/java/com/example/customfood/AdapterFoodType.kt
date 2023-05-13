@@ -12,7 +12,6 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
-import com.example.customfood.ui.FoodOptions
 import kotlinx.coroutines.*
 import kotlin.system.exitProcess
 
@@ -62,10 +61,13 @@ class AdapterFoodType(
         return options.size
     }
 
+
+    /*
     private suspend fun downloadChoices(foodType: String) : List<DataItemResponse>{
         Log.d(TAG, "in downloadChoices")
         return withContext(Dispatchers.IO) {
             service.getFoodChoices(foodType)
         }
     }
+    */
 }

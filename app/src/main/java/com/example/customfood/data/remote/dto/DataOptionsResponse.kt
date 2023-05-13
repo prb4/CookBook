@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class DataOptionsResponse(
     val name: String,
     val items: List<DataItemResponse>,
-    val image: String?
+    val image_name: String,
+    val encoded_image: String
 ) : java.io.Serializable
