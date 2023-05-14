@@ -11,15 +11,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customfood.data.remote.dto.DataItem
+import com.example.customfood.data.remote.dto.DataOption
 import com.example.customfood.data.remote.dto.DataOptionsResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
 import com.example.customfood.ui.ManageData
-import com.example.customfood.ui.Util
+import com.google.gson.Gson
 import kotlinx.coroutines.*
+import org.json.JSONObject
+import kotlin.reflect.full.memberProperties
+import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
-    var foodOptions = listOf<DataOptionsResponse>()
+    var foodOptions = JSONObject()
     var ingredients : List<String> = listOf()
     var ignoreIngredients : List<String> = listOf()
     var userId : String = ""
@@ -42,12 +47,13 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             val dataFoodTypes = mutableListOf<DataFoodType>()
 
             foodOptions = manageData.getOptions()
+            Log.d(TAG, "Have options")
 
             runBlocking {
-                Log.d(TAG, "Options: " + foodOptions.size)
-                for (option in foodOptions) {
-                    Log.d(TAG, option.name)
-
+                val keyIterator = foodOptions.keys()
+                while(keyIterator.hasNext()){
+                    val key = keyIterator.next()
+                    val option = Gson().fromJson(foodOptions.get(key).toString(), DataOption::class.java)
                     val image = manageData.getOptionImage(option)
                     dataFoodTypes.add(DataFoodType(option.name, image))
                     Log.d(TAG, "Successfully retrived image for " + option.name)
@@ -55,9 +61,11 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             }
 
             GlobalScope.launch(Dispatchers.IO){
-                for (option in foodOptions){
+                for (key in foodOptions.keys()){
                     //Kick this off so it gets started prior to a selection
-                    manageData.getItems(option)
+                    val data = Gson().fromJson(foodOptions.get(key).toString(), DataOption::class.java)
+
+                    manageData.getItems(data)
                 }
             }.cancel()
 
@@ -104,22 +112,22 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     }
 
     override fun onFoodTypeItemClick(foodOption: String) {
+        /*
+        Pass the items associated with <foodOption> to the CheckBox class, after clearing out 'encoded_image
+         */
         Log.d(TAG, "Back in MainActivity after clicking on ${foodOption}")
 
-        for (option in foodOptions) {
-            if (option.name.equals(foodOption)) {
-                Log.d(TAG, "Found ${option.name}")
-                val dataItemResponseList = option.items
-                for (item in dataItemResponseList){
-                    item.encoded_image = ""
-                }
-                Log.d(TAG, "Packaging ${dataItemResponseList.toString()}")
-                Intent(this, CheckBox::class.java).also {
-                    it.putExtra("EXTRA_FOODLIST", dataItemResponseList as java.io.Serializable)
-                    Log.d(TAG, "Starting activity: Checkbox")
-                    startActivityForResult(it, R.integer.FOOD_TYPE)
-                }
-            }
+        val gson = Gson()
+        val foodOptionsJson = gson.toJson(foodOptions) as JSONObject
+        val option = foodOptionsJson.get(foodOption) as DataOption
+
+        for (item in option.items){
+            item.encoded_image = ""
+        }
+        Intent(this, CheckBox::class.java).also {
+            it.putExtra("EXTRA_FOODLIST", option.items as java.io.Serializable)
+            Log.d(TAG, "Starting activity: Checkbox")
+            startActivityForResult(it, R.integer.FOOD_TYPE)
         }
     }
 }

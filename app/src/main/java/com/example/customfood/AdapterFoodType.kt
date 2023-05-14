@@ -1,19 +1,14 @@
 package com.example.customfood
 
-import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.ImageView
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.RecyclerView
-import com.example.customfood.data.remote.dto.DataItemResponse
+import com.example.customfood.data.remote.dto.DataItem
 import com.example.customfood.data.remote.dto.IRestAPIService
-import kotlinx.coroutines.*
-import kotlin.system.exitProcess
 
 class AdapterFoodType(
     val options: List<DataFoodType>,
@@ -40,7 +35,7 @@ class AdapterFoodType(
         holder.itemView.setOnClickListener{
             //TODO - Seems like some clicks aren't registered. Maybe the click is landing on the textview?
             Log.d(TAG, "Clicked on ${options[position].title}")
-            var webRequests : List<DataItemResponse>? = null
+            var webRequests : List<DataItem>? = null
             //var response: List<DataPostResponse>? = null
 
             //TODO - need to return out of this, or do a callback

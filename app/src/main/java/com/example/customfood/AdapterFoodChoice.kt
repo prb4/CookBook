@@ -13,14 +13,11 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.customfood.data.remote.dto.DataItemResponse
-import com.example.customfood.data.remote.dto.IRestAPIService
+import com.example.customfood.data.remote.dto.DataItem
 import com.example.customfood.ui.ManageData
-import com.example.customfood.ui.Util
-import kotlinx.coroutines.*
 
 class AdapterFoodChoice(
-    val dataItemResponses: List<DataItemResponse>
+    val dataItemResponses: List<DataItem>
 ) : RecyclerView.Adapter<AdapterFoodChoice.FoodViewHolder>() {
 
     val TAG = "CustomFood - AdapterFoodChoice.kt"
@@ -30,7 +27,7 @@ class AdapterFoodChoice(
         val description: TextView = itemView.findViewById<CheckBox>(R.id.tv_description)
         val imageView: ImageView = itemView.findViewById<ImageView>(R.id.iv_img)
         val cardView: CardView = itemView.findViewById<CardView>(R.id.cv)
-        fun bind(item: DataItemResponse) {
+        fun bind(item: DataItem) {
             val context: Context = itemView.context
             Log.d(TAG, "in FoodViewHolder.bind")
 

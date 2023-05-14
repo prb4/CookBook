@@ -1,10 +1,7 @@
 package com.example.customfood.data.remote.dto
 
-import android.os.Parcel
-import android.os.Parcelable
-
 @kotlinx.serialization.Serializable
-data class DataItemResponse(
+data class old_DataItem(
     val name : String,
     val image_name : String,
     var encoded_image: String,

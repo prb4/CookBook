@@ -10,6 +10,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import org.json.JSONObject
 import kotlin.coroutines.coroutineContext
 import kotlin.system.exitProcess
 
@@ -18,7 +19,7 @@ class RecipeServiceImplementation(
 ) : IRestAPIService {
     val TAG = "CustomFood - RecipeServiceImplementation"
 
-    override suspend fun getOptions(): List<DataOptionsResponse> {
+    override suspend fun getOptions(): DataOptionsResponse {
         Log.d(TAG, "in getOptions")
         return client.get {
             url(HttpRoutes.OPTIONS)
@@ -34,7 +35,7 @@ class RecipeServiceImplementation(
         }
     }
 
-    override suspend fun getItems(option: String): List<DataItemResponse> {
+    override suspend fun getItems(option: String): List<DataItem> {
         Log.d(TAG, "in getItems")
         return client.get {
             url(HttpRoutes.ITEMS)
@@ -42,7 +43,7 @@ class RecipeServiceImplementation(
             parameter("option", option)
         }
     }
-    override suspend fun getItem(item: String): DataItemResponse {
+    override suspend fun getItem(item: String): DataItem {
         Log.d(TAG, "in getItem")
         return client.get {
             url(HttpRoutes.ITEM)

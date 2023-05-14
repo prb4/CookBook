@@ -7,6 +7,7 @@ import io.ktor.client.engine.android.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
+import org.json.JSONObject
 
 interface IRestAPIService {
 
@@ -14,11 +15,11 @@ interface IRestAPIService {
 
     suspend fun createPost(postRequest: DataRequest): DataRequest?
 
-    suspend fun getOptions(): List<DataOptionsResponse>
+    suspend fun getOptions(): DataOptionsResponse
 
-    suspend fun getItems(option: String): List<DataItemResponse>
+    suspend fun getItems(option: String): List<DataItem>
 
-    suspend fun getItem(item: String): DataItemResponse
+    suspend fun getItem(item: String): DataItem
 
     suspend fun getOption(option: String): DataOptionsResponse
 
