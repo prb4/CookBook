@@ -36,15 +36,17 @@ class CheckBox (): AppCompatActivity() {
             val checkedItems = adapter.getSelectedItems()
             val ignoreItems = adapter.getIgnoreItems()
 
-            val arrayCheckedItems : ArrayList<String> = ArrayList(checkedItems)
-            val arrayIgnoreItems : ArrayList<String> = ArrayList(ignoreItems)
+            //val arrayCheckedItems : ArrayList<String> = ArrayList(checkedItems)
+            //val arrayIgnoreItems : ArrayList<String> = ArrayList(ignoreItems)
 
-            Log.d(TAG, "Checked items: ${arrayCheckedItems.size}")
+            //Log.d(TAG, "Checked items: ${arrayCheckedItems.size}")
 
             val resultIntent = Intent()
 
-            resultIntent.putStringArrayListExtra("EXTRA_INGREDIENTS", arrayCheckedItems)
-            resultIntent.putStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS", arrayIgnoreItems)
+            resultIntent.putExtra("EXTRA_INGREDIENTS", ArrayList(checkedItems))
+            resultIntent.putExtra("EXTRA_IGNORE_INGREDIENTS", ArrayList(ignoreItems))
+            //resultIntent.putStringArrayListExtra("EXTRA_INGREDIENTS", arrayCheckedItems)
+            //resultIntent.putStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS", arrayIgnoreItems)
             setResult(Activity.RESULT_OK, resultIntent)
 
             finish()

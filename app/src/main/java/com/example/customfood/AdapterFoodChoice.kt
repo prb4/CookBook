@@ -95,14 +95,14 @@ class AdapterFoodChoice(
         return dataItemResponses.size
     }
 
-    fun getSelectedItems(): List<String> {
+    fun getSelectedItems(): List<DataItem> {
         Log.d(TAG, "in getCheckedItems")
-        return dataItemResponses.filter { it.isChecked.equals("selected") }.map {it.name}
+        return dataItemResponses.filter { it.isChecked.equals("selected") }.map {it}
     }
 
-    fun getIgnoreItems(): List<String> {
+    fun getIgnoreItems(): List<DataItem> {
         Log.d(TAG, "in getCheckedItems")
-        return dataItemResponses.filter { it.isChecked.equals("ignore") }.map {it.name}
+        return dataItemResponses.filter { it.isChecked.equals("ignore") }.map {it}
     }
 
 }

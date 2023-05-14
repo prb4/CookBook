@@ -90,14 +90,16 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         if (requestCode == R.integer.FOOD_TYPE && resultCode == Activity.RESULT_OK && data != null) {
             //val returnedData: DataSelectedItems =
             //    data?.getSerializableExtra("EXTRA_FOOD_CHOICE") as DataSelectedItems
-            val selectedIngredients = data.getStringArrayListExtra("EXTRA_INGREDIENTS")
-            val avoidIngredients = data.getStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS")
+            //val selectedIngredients = data.getStringArrayListExtra("EXTRA_INGREDIENTS")
+            //val avoidIngredients = data.getStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS")
+            val selectedIngredients = data.getSerializableExtra("EXTRA_INGREDIENTS") as List<DataItem>
+            val avoidIngredients = data.getSerializableExtra("EXTRA_IGNORE_INGREDIENTS") as List<DataItem>
 
             Log.d(TAG, "Selected items: ${selectedIngredients.toString()}")
             Log.d(TAG, "Avoid items: ${avoidIngredients.toString()}")
 
-            ingredients = ingredients + selectedIngredients!!.toList()
-            ignoreIngredients = ignoreIngredients + avoidIngredients!!.toList()
+            //ingredients = ingredients + selectedIngredients!!.toList()
+            //ignoreIngredients = ignoreIngredients + avoidIngredients!!.toList()
 
             Log.d(TAG, "All selected items: ${ingredients.toString()}")
             Log.d(TAG, "All ignored items: ${ignoreIngredients.toString()}")
@@ -105,22 +107,13 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             //TODO - save list
         }
     }
-
-    private suspend fun downloadImage(image: String) : Bitmap{
-        Log.d(TAG, "in downloadImage: " + image)
-        return IRestAPIService.create().getImage(image)
-    }
-
     override fun onFoodTypeItemClick(foodOption: String) {
         /*
         Pass the items associated with <foodOption> to the CheckBox class, after clearing out 'encoded_image
          */
         Log.d(TAG, "Back in MainActivity after clicking on ${foodOption}")
 
-        val gson = Gson()
-        val foodOptionsJson = gson.toJson(foodOptions) as JSONObject
-        val option = foodOptionsJson.get(foodOption) as DataOption
-
+        val option = Gson().fromJson(foodOptions.get(foodOption).toString(), DataOption::class.java)
         for (item in option.items){
             item.encoded_image = ""
         }
