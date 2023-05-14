@@ -7,6 +7,6 @@ import android.os.Parcelable
 data class DataItemResponse(
     val name : String,
     val image_name : String,
-    val encoded_image: String,
+    var encoded_image: String,
     var isChecked : String //Implementing as a string due to API restraints
 ) : java.io.Serializable

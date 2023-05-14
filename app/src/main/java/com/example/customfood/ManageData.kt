@@ -5,24 +5,31 @@ import android.util.Log
 import com.example.customfood.data.remote.dto.DataItemResponse
 import com.example.customfood.data.remote.dto.DataOptionsResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
+import io.ktor.http.*
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.JsonObject
+import org.json.JSONObject
 
 class ManageData {
     val TAG = "CustomFood - ManageData"
 
-    var foodOptions = listOf<DataOptionsResponse>()
-    var foodItems = listOf<DataItemResponse>()
-
-    fun getItems(option: DataOptionsResponse) : List<DataItemResponse>{
-        var foodItems = listOf<DataItemResponse>()
-        Log.d(TAG, "No food options yet, downloading...")
-        val job = GlobalScope.launch(Dispatchers.Default) {
-            foodItems = downloadFoodItems(option.name)
-            Log.d(TAG, "Downloaded foodOptions: " + foodOptions.size)
+    companion object {
+        var foodOptions = listOf<DataOptionsResponse>()
+        var objectImageDict = JSONObject()
+    }
+    fun getItems(option: DataOptionsResponse){
+        Log.d(TAG, "in getItems: ${option}")
+        for (foodOption in foodOptions){
+            if (foodOption.name.equals(option.name)){
+                val util = Util()
+                for (item in foodOption.items){
+                    if (!(objectImageDict.has(item.name))){
+                        objectImageDict.put(item.name, util.base64ToBitmap(item.encoded_image))
+                    }
+                }
+            }
         }
-
-        Log.d(TAG, "Returning: " + foodItems.toString())
-        return foodItems
+        Log.d(TAG, objectImageDict.names().toString())
     }
 
     fun getItem(item: DataItemResponse) : DataItemResponse{

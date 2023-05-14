@@ -38,7 +38,6 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
 
             val rvOptions = findViewById<RecyclerView>(R.id.rv_options)
             val submit = findViewById<Button>(R.id.button_submit)
-
             val manageData = ManageData()
             val dataFoodTypes = mutableListOf<DataFoodType>()
 
@@ -55,8 +54,9 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                 }
             }
 
-            CoroutineScope(Dispatchers.IO).launch{
+            GlobalScope.launch(Dispatchers.IO){
                 for (option in foodOptions){
+                    //Kick this off so it gets started prior to a selection
                     manageData.getItems(option)
                 }
             }.cancel()
@@ -94,6 +94,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             Log.d(TAG, "All selected items: ${ingredients.toString()}")
             Log.d(TAG, "All ignored items: ${ignoreIngredients.toString()}")
             //TODO - make web request
+            //TODO - save list
         }
     }
 
@@ -109,6 +110,9 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             if (option.name.equals(foodOption)) {
                 Log.d(TAG, "Found ${option.name}")
                 val dataItemResponseList = option.items
+                for (item in dataItemResponseList){
+                    item.encoded_image = ""
+                }
                 Log.d(TAG, "Packaging ${dataItemResponseList.toString()}")
                 Intent(this, CheckBox::class.java).also {
                     it.putExtra("EXTRA_FOODLIST", dataItemResponseList as java.io.Serializable)

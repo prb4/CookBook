@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItemResponse
 import com.example.customfood.data.remote.dto.IRestAPIService
+import com.example.customfood.ui.ManageData
+import com.example.customfood.ui.Util
 import kotlinx.coroutines.*
 
 class AdapterFoodChoice(
@@ -23,69 +25,46 @@ class AdapterFoodChoice(
 
     val TAG = "CustomFood - AdapterFoodChoice.kt"
 
-    inner class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class FoodViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         //val checkBox : CheckBox = itemView.findViewById<CheckBox>(R.id.cv_selected)
-        val description : TextView = itemView.findViewById<CheckBox>(R.id.tv_description)
-        val imageView : ImageView = itemView.findViewById<ImageView>(R.id.iv_img)
-        val cardView : CardView = itemView.findViewById<CardView>(R.id.cv)
+        val description: TextView = itemView.findViewById<CheckBox>(R.id.tv_description)
+        val imageView: ImageView = itemView.findViewById<ImageView>(R.id.iv_img)
+        val cardView: CardView = itemView.findViewById<CardView>(R.id.cv)
         fun bind(item: DataItemResponse) {
-            val context : Context = itemView.context
+            val context: Context = itemView.context
             Log.d(TAG, "in FoodViewHolder.bind")
-            //var image = Bitmap.createBitmap(0, 0, Bitmap.Config.ARGB_8888)
-            //val dataFoodType = mutableListOf<DataFoodType>()
+
             description.text = item.name
 
-            //TODO - pull this out of the function so its not called multiple times
-            val job = GlobalScope.launch (Dispatchers.Default) {
-                val image = async {
-                    //TODO - want to remove this from this location
-                    Log.d(TAG, "Downloading image: " + item.image_name)
-                    downloadImage(item.image_name)
-                    //dataFoodType.add(DataFoodType(item.name, image))
-                }.await()
-                imageView.setImageBitmap(image)
-                Log.d(TAG, "${item.name} is checked: ${item.isChecked}")
-                cardView.setOnClickListener {
-                    if (item.isChecked.equals("blank")) {
-                        item.isChecked = "selected"
-                        cardView.setCardBackgroundColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.light_green
-                            )
+            imageView.setImageBitmap(ManageData.objectImageDict.get(item.name) as Bitmap)
+            Log.d(TAG, "${item.name} is checked: ${item.isChecked}")
+            cardView.setOnClickListener {
+                if (item.isChecked.equals("blank")) {
+                    item.isChecked = "selected"
+                    cardView.setCardBackgroundColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.light_green
                         )
-                    } else if (item.isChecked.equals("selected")) {
-                        item.isChecked = "ignore"
-                        cardView.setCardBackgroundColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.light_red
-                            )
+                    )
+                } else if (item.isChecked.equals("selected")) {
+                    item.isChecked = "ignore"
+                    cardView.setCardBackgroundColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.light_red
                         )
-                    } else if (item.isChecked.equals("ignore")) {
-                        item.isChecked = "blank"
-                        cardView.setCardBackgroundColor(
-                            Color.WHITE
-                        )
-                    }
-                    Log.d(TAG, "${item.name} was checked to ${item.isChecked}")
+                    )
+                } else if (item.isChecked.equals("ignore")) {
+                    item.isChecked = "blank"
+                    cardView.setCardBackgroundColor(
+                        Color.WHITE
+                    )
                 }
-                Log.d(TAG, "${item.name} is NOW checked: ${item.isChecked}")
+                Log.d(TAG, "${item.name} was checked to ${item.isChecked}")
             }
-            runBlocking {
-                job.join()
-                job.cancel()
-                Log.d(TAG, "Successfully downloaded image for " + item.name)
-            }
-        }
-
-        private suspend fun downloadImage(image: String) : Bitmap {
-            Log.d(TAG, "in downloadImage: " + image)
-            return IRestAPIService.create().getImage(image)
         }
     }
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
         Log.d(TAG, "in onCreateViewHolder")
         //val view = LayoutInflater.from(parent.context).inflate(R.layout.item_food, parent, false)

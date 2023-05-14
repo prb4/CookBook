@@ -27,10 +27,8 @@ class CheckBox (): AppCompatActivity() {
 
         Log.d(TAG, "Creating adapter")
         rvFood.adapter = AdapterFoodChoice(dataItemList)
-        Log.d(TAG, "Creating grid layout")
         //rvFood.layoutManager = LinearLayoutManager(this)
         rvFood.layoutManager = GridLayoutManager(this, 2)
-        Log.d(TAG, "Grid layout configured")
 
         submit.setOnClickListener{
             Log.d(TAG, "Submit Button Clicked")
