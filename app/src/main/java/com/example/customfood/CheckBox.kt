@@ -9,6 +9,8 @@ import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItem
+import com.example.customfood.data.remote.dto.DataOption
+import com.example.customfood.ui.ManageData
 
 class CheckBox (): AppCompatActivity() {
     val TAG = "CustomFood - CheckBox"
@@ -18,14 +20,16 @@ class CheckBox (): AppCompatActivity() {
         Log.d(TAG, "In CheckBox activity")
         setContentView(R.layout.activity_check_box)
 
-        val dataItemList = intent.getSerializableExtra("EXTRA_FOODLIST") as List<DataItem>
-        Log.d(TAG, dataItemList.toString())
+        val dataOption = intent.getSerializableExtra("EXTRA_OPTION") as DataOption
+        val manageData = ManageData()
+        val dataItems = manageData.getItems(dataOption)
+        Log.d(TAG, dataItems.toString())
 
         val rvFood = findViewById<RecyclerView>(R.id.rv_food)
         val submit = findViewById<Button>(R.id.button_submit)
 
         Log.d(TAG, "Creating adapter")
-        rvFood.adapter = AdapterFoodChoice(dataItemList)
+        rvFood.adapter = AdapterFoodChoice(dataItems)
         //rvFood.layoutManager = LinearLayoutManager(this)
         rvFood.layoutManager = GridLayoutManager(this, 2)
 
@@ -45,6 +49,7 @@ class CheckBox (): AppCompatActivity() {
 
             resultIntent.putExtra("EXTRA_INGREDIENTS", ArrayList(checkedItems))
             resultIntent.putExtra("EXTRA_IGNORE_INGREDIENTS", ArrayList(ignoreItems))
+            resultIntent.putExtra("EXTRA_OPTION", dataOption)
             //resultIntent.putStringArrayListExtra("EXTRA_INGREDIENTS", arrayCheckedItems)
             //resultIntent.putStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS", arrayIgnoreItems)
             setResult(Activity.RESULT_OK, resultIntent)

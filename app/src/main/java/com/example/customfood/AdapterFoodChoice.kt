@@ -34,6 +34,7 @@ class AdapterFoodChoice(
             description.text = item.name
 
             imageView.setImageBitmap(ManageData.objectImageDict.get(item.name) as Bitmap)
+            setBackground(item)
             Log.d(TAG, "${item.name} is checked: ${item.isChecked}")
             cardView.setOnClickListener {
                 if (item.isChecked.equals("blank")) {
@@ -60,6 +61,30 @@ class AdapterFoodChoice(
                 }
                 Log.d(TAG, "${item.name} was checked to ${item.isChecked}")
             }
+        }
+
+        fun setBackground(item: DataItem, ) {
+            val context: Context = itemView.context
+            if (item.isChecked.equals("selected")) {
+                cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.light_green
+                    )
+                )
+            } else if (item.isChecked.equals("ignore")) {
+                cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.light_red
+                    )
+                )
+            } else if (item.isChecked.equals("blank")) {
+                cardView.setCardBackgroundColor(
+                    Color.WHITE
+                )
+            }
+            Log.d(TAG, "${item.name} was checked to ${item.isChecked}")
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {

@@ -6,6 +6,7 @@ import com.example.customfood.data.remote.dto.*
 import com.google.gson.Gson
 import io.ktor.http.*
 import kotlinx.coroutines.*
+import org.json.JSONException
 import org.json.JSONObject
 
 class ManageData {
@@ -14,31 +15,80 @@ class ManageData {
     companion object {
         var foodOptions : JSONObject = JSONObject()
         var objectImageDict = JSONObject()
+        var foodItemsJson = JSONObject()
     }
-    fun getItems(option: DataOption){
+
+    fun getItems(option: DataOption): List<DataItem> {
+        Log.d(TAG, "in getItems: ${option.name}")
+        return foodItemsJson.get(option.name) as List<DataItem>
+    }
+
+    fun setItem(option: DataOption, item: DataItem){
+        Log.d(TAG, "in setItem: ${item.name}")
+        if (0 == foodItemsJson.length()){
+            foodItemsJson.put(option.name, listOf(item))
+        } else {
+            Log.d(TAG, "Checking foodItemsJson for ${option.name}")
+
+            var foodItems: List<DataItem> = mutableListOf<DataItem>()
+            try {
+                foodItems = foodItemsJson.get(option.name) as List<DataItem>
+            } catch (e: JSONException) {
+                Log.e(TAG, "foodItems['${option.name}'] was empty")
+                foodItemsJson.put(option.name, listOf(item))
+                return
+            }
+
+            for (foodItem in foodItems){
+                if (foodItem.name.equals(item.name)){
+                    //item exist in foodItemJson
+                    foodItem.isChecked = item.isChecked
+                    Log.d(TAG, "Updating to ${foodItems.toString()}")
+                    return
+                }
+            }
+            //item did not previously exist in foodItemJson, so add it
+            foodItems = foodItems + item
+            Log.d(TAG, "Updating to ${foodItems.toString()}")
+            //Store the changes
+            foodItemsJson.put(option.name, foodItems)
+        }
+    }
+
+    fun setItems(option: DataOption, items: List<DataItem>){
+        Log.d(TAG, "in setItems")
+        if (0 == foodItemsJson.length()){
+            foodItemsJson.put(option.name, items)
+        } else {
+            val foodItems = foodItemsJson.get(option.name) as List<DataItem>
+            for (item in items) {
+                for (foodItem in foodItems) {
+                    if (foodItem.name.equals(item.name)) {
+                        foodItem.isChecked = item.isChecked
+                        Log.d(TAG, "Changed ${foodItem.name} to ${foodItem.isChecked}")
+                    }
+                }
+            }
+        }
+    }
+    fun initializeItems(option: DataOption){
         /*
         Take in a DataOption, and make sure all of its items are good to go
          */
-        Log.d(TAG, "in getItems: ${option.name}")
+        Log.d(TAG, "in initializeItems: ${option.name}")
 
         val util = Util()
         for (item in option.items){
+            Log.d(TAG, "initializing ${item.name}")
             if (!(objectImageDict.has(item.name))){
+                Log.d(TAG, "Fixing up image for ${item.name}")
                 objectImageDict.put(item.name, util.base64ToBitmap(item.encoded_image))
             }
+            item.encoded_image = ""
+            setItem(option, item)
         }
+        Log.d(TAG, "Initialized items: ${foodItemsJson.toString()}")
         Log.d(TAG, objectImageDict.names().toString())
-    }
-
-    fun getItem(item: DataItem) : DataItem{
-        var foodItem : DataItem = DataItem("","","", "")
-        Log.d(TAG, "in getItem)")
-        val job = GlobalScope.launch(Dispatchers.Default) {
-            foodItem = downloadFoodItem(item.name)
-    }
-
-    Log.d(TAG, "Returning: " + foodItem.toString())
-    return foodItem
     }
 
     fun getOptions(): JSONObject{

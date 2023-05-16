@@ -25,8 +25,8 @@ import kotlin.system.exitProcess
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
     var foodOptions = JSONObject()
-    var ingredients : List<String> = listOf()
-    var ignoreIngredients : List<String> = listOf()
+    var ingredients : List<DataItem> = listOf()
+    var ignoreIngredients : List<DataItem> = listOf()
     var userId : String = ""
     var original_recipe : Boolean = true
 
@@ -64,8 +64,8 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                 for (key in foodOptions.keys()){
                     //Kick this off so it gets started prior to a selection
                     val data = Gson().fromJson(foodOptions.get(key).toString(), DataOption::class.java)
-
-                    manageData.getItems(data)
+                    Log.d(TAG, "Initializing ${data.name}")
+                    manageData.initializeItems(data)
                 }
             }.cancel()
 
@@ -94,15 +94,20 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             //val avoidIngredients = data.getStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS")
             val selectedIngredients = data.getSerializableExtra("EXTRA_INGREDIENTS") as List<DataItem>
             val avoidIngredients = data.getSerializableExtra("EXTRA_IGNORE_INGREDIENTS") as List<DataItem>
+            val dataOption = data.getSerializableExtra("EXTRA_OPTION") as DataOption
 
             Log.d(TAG, "Selected items: ${selectedIngredients.toString()}")
             Log.d(TAG, "Avoid items: ${avoidIngredients.toString()}")
 
-            //ingredients = ingredients + selectedIngredients!!.toList()
-            //ignoreIngredients = ignoreIngredients + avoidIngredients!!.toList()
+            ingredients = ingredients + selectedIngredients!!.toList()
+            ignoreIngredients = ignoreIngredients + avoidIngredients!!.toList()
 
             Log.d(TAG, "All selected items: ${ingredients.toString()}")
             Log.d(TAG, "All ignored items: ${ignoreIngredients.toString()}")
+
+            val manageData = ManageData()
+            manageData.setItems(dataOption, ingredients)
+            manageData.setItems(dataOption, ignoreIngredients)
             //TODO - make web request
             //TODO - save list
         }
@@ -118,7 +123,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             item.encoded_image = ""
         }
         Intent(this, CheckBox::class.java).also {
-            it.putExtra("EXTRA_FOODLIST", option.items as java.io.Serializable)
+            it.putExtra("EXTRA_OPTION", option as java.io.Serializable)
             Log.d(TAG, "Starting activity: Checkbox")
             startActivityForResult(it, R.integer.FOOD_TYPE)
         }

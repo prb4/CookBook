@@ -51,13 +51,13 @@ class RecipeServiceImplementation(
             parameter("item", item)
         }
     }
-    override suspend fun getRecipe(ingredients: List<String>, ignore: List<String>, userId: String, original: Boolean){
+    override suspend fun getRecipe(ingredients: List<DataItem>, ignore: List<DataItem>, userId: String, original: Boolean){
         Log.d(TAG, "in getRecipe")
         return client.get {
             url(HttpRoutes.RECIPE)
             port = HttpRoutes.PORT
-            parameter("whitelist", ingredients)
-            parameter("ignore", ignore)
+            parameter("whitelist", ingredients.toString())
+            parameter("ignore", ignore.toString())
             parameter("user_id", userId)
             parameter("original", original)
         }
