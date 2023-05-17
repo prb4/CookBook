@@ -26,8 +26,8 @@ interface IRestAPIService {
     suspend fun getImage(image: String): Bitmap
 
     suspend fun getRecipe(
-        ingredients: List<DataItem>,
-        ignoreIngredients: List<DataItem>,
+        ingredients: List<String>,
+        ignoreIngredients: List<String>,
         userId: String,
         original: Boolean
     ){

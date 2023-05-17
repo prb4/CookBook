@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         setContent {
             Log.d(TAG, "Starting MainActivity")
             //TODO - change to AndroidX / callback variant
+            //TODO - create onResume (ie: when phone layout changes.  Do we need to make a request each time?
 
             //Start recycler view stuff
             setContentView(R.layout.activity_main)
@@ -78,7 +79,17 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             submit.setOnClickListener{
                 Log.d(TAG, "Submit Button Clicked in OnCreate")
                 runBlocking {
-                    val result = IRestAPIService.create().getRecipe(ingredients, ignoreIngredients, userId, original_recipe)
+                    val whitelist = mutableListOf<String>()
+                    val blacklist = mutableListOf<String>()
+                    for (ingredient in ingredients){
+                        whitelist.add(ingredient.name)
+                    }
+                    for (ignoreIngredient in ignoreIngredients){
+                        blacklist.add(ignoreIngredient.name)
+                    }
+                    Log.d(TAG, "Gettign recipe for: whitelist: ${whitelist.toString()}, and blacklist: ${blacklist.toString()}")
+                    val result = IRestAPIService.create().getRecipe(whitelist, blacklist, userId, original_recipe)
+                    Log.d(TAG, "Recipe: ${result}")
                 }
             }
         }
