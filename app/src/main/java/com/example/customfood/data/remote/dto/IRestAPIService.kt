@@ -30,9 +30,7 @@ interface IRestAPIService {
         ignoreIngredients: List<String>,
         userId: String,
         original: Boolean
-    ){
-
-    }
+    ):DataRecipe
     companion object {
         fun create(): IRestAPIService {
             return RecipeServiceImplementation(

@@ -28,3 +28,10 @@ data class DataItem(
     val name: String,
     var encoded_image: String
 ) : java.io.Serializable
+
+@Serializable
+data class DataRecipe(
+    val recipe: List<String>,
+    val ingredients: List<String>,
+    val recipe_id: String
+) : java.io.Serializable

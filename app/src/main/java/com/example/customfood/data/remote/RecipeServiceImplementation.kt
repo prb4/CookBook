@@ -51,7 +51,7 @@ class RecipeServiceImplementation(
             parameter("item", item)
         }
     }
-    override suspend fun getRecipe(ingredients: List<String>, ignore: List<String>, userId: String, original: Boolean){
+    override suspend fun getRecipe(ingredients: List<String>, ignore: List<String>, userId: String, original: Boolean): DataRecipe{
         Log.d(TAG, "in getRecipe")
         return client.get {
             url(HttpRoutes.RECIPE)

@@ -3,7 +3,6 @@ package com.example.customfood
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -13,14 +12,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItem
 import com.example.customfood.data.remote.dto.DataOption
-import com.example.customfood.data.remote.dto.DataOptionsResponse
-import com.example.customfood.data.remote.dto.IRestAPIService
 import com.example.customfood.ui.ManageData
+import com.example.customfood.ui.Recipe
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import kotlin.reflect.full.memberProperties
-import kotlin.system.exitProcess
 
 class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     val TAG = "CustomFood - MainActivity"
@@ -78,18 +74,23 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
 
             submit.setOnClickListener{
                 Log.d(TAG, "Submit Button Clicked in OnCreate")
-                runBlocking {
-                    val whitelist = mutableListOf<String>()
-                    val blacklist = mutableListOf<String>()
-                    for (ingredient in ingredients){
-                        whitelist.add(ingredient.name)
-                    }
-                    for (ignoreIngredient in ignoreIngredients){
-                        blacklist.add(ignoreIngredient.name)
-                    }
-                    Log.d(TAG, "Gettign recipe for: whitelist: ${whitelist.toString()}, and blacklist: ${blacklist.toString()}")
-                    val result = IRestAPIService.create().getRecipe(whitelist, blacklist, userId, original_recipe)
-                    Log.d(TAG, "Recipe: ${result}")
+                val whitelist = mutableListOf<String>()
+                val blacklist = mutableListOf<String>()
+                for (ingredient in ingredients){
+                    whitelist.add(ingredient.name)
+                }
+                for (ignoreIngredient in ignoreIngredients){
+                    blacklist.add(ignoreIngredient.name)
+                }
+                Log.d(TAG, "Getting recipe for: whitelist: ${whitelist.toString()}, and blacklist: ${blacklist.toString()}")
+
+                Intent(this, Recipe::class.java).also{
+                    Log.d(TAG, "Starting activity: Recipe")
+                    it.putStringArrayListExtra("EXTRA_INCLUDE_INGREDIENTS", ArrayList(whitelist))
+                    it.putStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS", ArrayList(blacklist))
+                    it.putExtra("EXTRA_USER_ID", userId)
+                    it.putExtra("EXTRA_ORIGINAL_RECIPE", original_recipe)
+                    startActivity(it)
                 }
             }
         }
