@@ -8,9 +8,7 @@ import android.util.Log
 import android.widget.Button
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.customfood.data.remote.dto.DataItem
 import com.example.customfood.data.remote.dto.DataOption
-import com.example.customfood.ui.ManageData
 
 class CheckBox (): AppCompatActivity() {
     val TAG = "CustomFood - CheckBox"
@@ -21,8 +19,7 @@ class CheckBox (): AppCompatActivity() {
         setContentView(R.layout.activity_check_box)
 
         val dataOption = intent.getSerializableExtra("EXTRA_OPTION") as DataOption
-        val manageData = ManageData()
-        val dataItems = manageData.getItems(dataOption)
+        val dataItems = ManageDataSingleton.getItems(dataOption)
         Log.d(TAG, dataItems.toString())
 
         val rvFood = findViewById<RecyclerView>(R.id.rv_food)

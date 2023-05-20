@@ -14,7 +14,6 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItem
-import com.example.customfood.ui.ManageData
 
 class AdapterFoodChoice(
     val dataItemResponses: List<DataItem>
@@ -33,7 +32,7 @@ class AdapterFoodChoice(
 
             description.text = item.name
 
-            imageView.setImageBitmap(ManageData.objectImageDict.get(item.name) as Bitmap)
+            imageView.setImageBitmap(ManageDataSingleton.objectImageDict.get(item.name) as Bitmap)
             setBackground(item)
             Log.d(TAG, "${item.name} is checked: ${item.isChecked}")
             cardView.setOnClickListener {

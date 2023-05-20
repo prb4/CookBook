@@ -3,6 +3,7 @@ package com.example.customfood
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -12,7 +13,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.data.remote.dto.DataItem
 import com.example.customfood.data.remote.dto.DataOption
-import com.example.customfood.ui.ManageData
 import com.example.customfood.ui.Recipe
 import com.google.gson.Gson
 import kotlinx.coroutines.*
@@ -40,18 +40,30 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
 
             val rvOptions = findViewById<RecyclerView>(R.id.rv_options)
             val submit = findViewById<Button>(R.id.button_submit)
-            val manageData = ManageData()
             val dataFoodTypes = mutableListOf<DataFoodType>()
+            Log.d(TAG, "Checking options: ${ManageDataSingleton.foodOptions.length().toString()}")
+            foodOptions = if (ManageDataSingleton.foodOptions.length() == 0){
+                ManageDataSingleton.getOptions()
+            } else {
+                Log.d(TAG, "Time save - already have foodOptions")
+                ManageDataSingleton.foodOptions
+            }
 
-            foodOptions = manageData.getOptions()
-            Log.d(TAG, "Have options")
+            Log.d(TAG, "Have options: ${ManageDataSingleton.foodOptions.length().toString()}")
 
             runBlocking {
                 val keyIterator = foodOptions.keys()
                 while(keyIterator.hasNext()){
                     val key = keyIterator.next()
                     val option = Gson().fromJson(foodOptions.get(key).toString(), DataOption::class.java)
-                    val image = manageData.getOptionImage(option)
+
+                    val image = if (ManageDataSingleton.objectImageDict.has(option.name)){
+                        Log.d(TAG, "Time save - no initOptionImage")
+                        ManageDataSingleton.objectImageDict.get(option.name) as Bitmap
+                    } else {
+                        ManageDataSingleton.initOptionImage(option)
+                    }
+
                     dataFoodTypes.add(DataFoodType(option.name, image))
                     Log.d(TAG, "Successfully retrived image for " + option.name)
                 }
@@ -60,9 +72,16 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             GlobalScope.launch(Dispatchers.IO){
                 for (key in foodOptions.keys()){
                     //Kick this off so it gets started prior to a selection
-                    val data = Gson().fromJson(foodOptions.get(key).toString(), DataOption::class.java)
-                    Log.d(TAG, "Initializing ${data.name}")
-                    manageData.initializeItems(data)
+                    val data : DataOption = Gson().fromJson(foodOptions.get(key).toString(), DataOption::class.java)
+                    for (item in data.items) {
+                        if (! ManageDataSingleton.objectImageDict.has(item.name)){
+                            Log.d(TAG, "Initializing ${data.name}")
+                            ManageDataSingleton.initializeItem(data, item)
+                            //manageData.initializeItem(data, item)
+                        } else {
+                            Log.d(TAG, "Time save - Not re-initializing the item: ${item.name}")
+                        }
+                    }
                 }
             }.cancel()
 
@@ -117,9 +136,11 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
             Log.d(TAG, "All selected items: ${ingredients.toString()}")
             Log.d(TAG, "All ignored items: ${ignoreIngredients.toString()}")
 
-            val manageData = ManageData()
-            manageData.setItems(dataOption, ingredients)
-            manageData.setItems(dataOption, ignoreIngredients)
+            //val manageData = ManageData()
+            ManageDataSingleton.setItems(dataOption, ingredients)
+            ManageDataSingleton.setItems(dataOption, ignoreIngredients)
+            //manageData.setItems(dataOption, ingredients)
+            //manageData.setItems(dataOption, ignoreIngredients)
             //TODO - make web request
             //TODO - save list
         }

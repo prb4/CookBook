@@ -33,5 +33,5 @@ data class DataItem(
 data class DataRecipe(
     val recipe: List<String>,
     val ingredients: List<String>,
-    val recipe_id: String
+    val id: String
 ) : java.io.Serializable
