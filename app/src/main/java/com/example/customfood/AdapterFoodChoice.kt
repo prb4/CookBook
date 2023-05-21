@@ -27,6 +27,7 @@ class AdapterFoodChoice(
         val imageView: ImageView = itemView.findViewById<ImageView>(R.id.iv_img)
         val cardView: CardView = itemView.findViewById<CardView>(R.id.cv)
         fun bind(item: DataItem) {
+            //Used to bind the position to the card view in order to change the background color
             val context: Context = itemView.context
             Log.d(TAG, "in FoodViewHolder.bind")
 
