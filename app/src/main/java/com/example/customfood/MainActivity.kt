@@ -73,13 +73,15 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                 for (key in foodOptions.keys()){
                     //Kick this off so it gets started prior to a selection
                     val data : DataOption = Gson().fromJson(foodOptions.get(key).toString(), DataOption::class.java)
-                    for (item in data.items) {
-                        if (! ManageDataSingleton.objectImageDict.has(item.name)){
-                            Log.d(TAG, "Initializing ${data.name}")
-                            ManageDataSingleton.initializeItem(data, item)
-                            //manageData.initializeItem(data, item)
-                        } else {
-                            Log.d(TAG, "Time save - Not re-initializing the item: ${item.name}")
+                    if (!data.items?.isEmpty()!!) {
+                        for (item in data.items) {
+                            if (!ManageDataSingleton.objectImageDict.has(item.name)) {
+                                Log.d(TAG, "Initializing ${data.name}")
+                                ManageDataSingleton.initializeItem(data, item)
+                                //manageData.initializeItem(data, item)
+                            } else {
+                                Log.d(TAG, "Time save - Not re-initializing the item: ${item.name}")
+                            }
                         }
                     }
                 }
@@ -109,6 +111,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
                     it.putStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS", ArrayList(blacklist))
                     it.putExtra("EXTRA_USER_ID", userId)
                     it.putExtra("EXTRA_ORIGINAL_RECIPE", original_recipe)
+                    it.putExtra("EXTRA_RANDOM", false)
                     startActivity(it)
                 }
             }
@@ -151,14 +154,33 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
          */
         Log.d(TAG, "Back in MainActivity after clicking on ${foodOption}")
 
-        val option = Gson().fromJson(foodOptions.get(foodOption).toString(), DataOption::class.java)
-        for (item in option.items){
-            item.encoded_image = ""
-        }
-        Intent(this, CheckBox::class.java).also {
-            it.putExtra("EXTRA_OPTION", option as java.io.Serializable)
-            Log.d(TAG, "Starting activity: Checkbox")
-            startActivityForResult(it, R.integer.FOOD_TYPE)
+        if (foodOption.equals("Random")){
+            Log.d(TAG, "Going straight to server")
+
+            Intent(this, Recipe::class.java).also{
+                Log.d(TAG, "Starting activity: Recipe")
+                it.putStringArrayListExtra("EXTRA_INCLUDE_INGREDIENTS", ArrayList())
+                it.putStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS", ArrayList())
+                it.putExtra("EXTRA_USER_ID", userId)
+                it.putExtra("EXTRA_ORIGINAL_RECIPE", false)
+                it.putExtra("EXTRA_RANDOM", true)
+                startActivity(it)
+            }
+
+        } else {
+
+            val option =
+                Gson().fromJson(foodOptions.get(foodOption).toString(), DataOption::class.java)
+            if (!option.items?.isEmpty()!!) {
+                for (item in option.items) {
+                    item.encoded_image = ""
+                }
+            }
+            Intent(this, CheckBox::class.java).also {
+                it.putExtra("EXTRA_OPTION", option as java.io.Serializable)
+                Log.d(TAG, "Starting activity: Checkbox")
+                startActivityForResult(it, R.integer.FOOD_TYPE)
+            }
         }
     }
 }

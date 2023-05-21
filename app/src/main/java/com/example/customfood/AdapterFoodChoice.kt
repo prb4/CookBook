@@ -89,7 +89,6 @@ class AdapterFoodChoice(
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoodViewHolder {
         Log.d(TAG, "in onCreateViewHolder")
-        //val view = LayoutInflater.from(parent.context).inflate(R.layout.item_food, parent, false)
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_card, parent, false)
         return FoodViewHolder(view)
     }

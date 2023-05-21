@@ -29,7 +29,8 @@ interface IRestAPIService {
         ingredients: List<String>,
         ignoreIngredients: List<String>,
         userId: String,
-        original: Boolean
+        original: Boolean,
+        random: Boolean
     ):DataRecipe
     companion object {
         fun create(): IRestAPIService {

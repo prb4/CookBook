@@ -51,7 +51,7 @@ class RecipeServiceImplementation(
             parameter("item", item)
         }
     }
-    override suspend fun getRecipe(ingredients: List<String>, ignore: List<String>, userId: String, original: Boolean): DataRecipe{
+    override suspend fun getRecipe(ingredients: List<String>, ignore: List<String>, userId: String, original: Boolean, random: Boolean): DataRecipe{
         Log.d(TAG, "in getRecipe")
         return client.get {
             url(HttpRoutes.RECIPE)
@@ -60,6 +60,7 @@ class RecipeServiceImplementation(
             parameter("ignore", ignore.toString())
             parameter("user_id", userId)
             parameter("original", original)
+            parameter("random", random)
         }
     }
     override suspend fun getImage(image: String): Bitmap {

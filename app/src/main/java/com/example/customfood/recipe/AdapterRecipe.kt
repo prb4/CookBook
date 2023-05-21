@@ -20,7 +20,6 @@ class AdapterRecipe(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recipe_text, parent, false)
-        //val view = LayoutInflater.from(parent.context).inflate(R.layout.dual_cards, parent, false)
         return RecipeViewHolder(view)
     }
 
@@ -34,7 +33,7 @@ class AdapterRecipe(
         //TODO - how to display the image
         Log.d(TAG, "Position: ${position}, Title: ${dataText[position]}")
         //TODO - Make the cardview's closer together, maybe move away from a constraint layout?
-        holder.itemView.findViewById<TextView>(R.id.tv_text).text = dataText[position]
+        holder.itemView.findViewById<TextView>(R.id.cb_text).text = dataText[position]
 
     }
 }

@@ -33,21 +33,22 @@ class Recipe : AppCompatActivity() {
         val blacklist : List<String> = intent.getStringArrayListExtra("EXTRA_IGNORE_INGREDIENTS") as List<String>
         val user_id : String? = intent.getStringExtra("EXTRA_USER_ID")
         val original_recipe: Boolean = intent.getBooleanExtra("EXTRA_ORIGINAL_RECIPE", true)
+        val random : Boolean = intent.getBooleanExtra("EXTRA_RANDOM", false)
 
         if (user_id != null) {
-            getRecipe(this, whitelist, blacklist, user_id, original_recipe)
+            getRecipe(this, whitelist, blacklist, user_id, original_recipe, random)
         } else {
             Log.e(TAG, "User ID is None")
         }
 
     }
 
-    fun getRecipe(context: Context, whitelist: List<String>, blacklist: List<String>, userId: String, original_recipe: Boolean) {
+    fun getRecipe(context: Context, whitelist: List<String>, blacklist: List<String>, userId: String, original_recipe: Boolean, random: Boolean) {
 
         // Start the long-running task in a coroutine
         GlobalScope.launch(Dispatchers.Main) {
             val result: DataRecipe =
-                IRestAPIService.create().getRecipe(whitelist, blacklist, userId, original_recipe)
+                IRestAPIService.create().getRecipe(whitelist, blacklist, userId, original_recipe, random)
 
             // Update the UI with the result
             val rvInstructions = findViewById<RecyclerView>(R.id.rv_instructions)

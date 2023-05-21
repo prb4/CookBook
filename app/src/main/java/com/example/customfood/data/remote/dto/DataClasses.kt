@@ -4,17 +4,19 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DataOptionsResponse(
-    val Dessert: DataOption,
     val Main: DataOption,
-    val Sides: DataOption
+    val Sides: DataOption,
+    val Dessert: DataOption,
+    val Cultural: DataOption,
+    val Random: DataOption
 ) : java.io.Serializable {
-    constructor() : this(DataOption(), DataOption(), DataOption())
+    constructor() : this(DataOption(), DataOption(), DataOption(), DataOption(), DataOption())
 }
 
 @Serializable
 data class DataOption(
     val image_name: String,
-    val items: List<DataItem>,
+    val items: List<DataItem>?,
     val name: String,
     val encoded_image: String
 ) : java.io.Serializable {
