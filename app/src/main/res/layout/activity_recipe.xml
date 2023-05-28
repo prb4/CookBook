@@ -11,18 +11,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="INGREDIENTS"
-        android:textSize="24sp"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-+
+    +
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_ingredients"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_instructions"
         app:layout_constraintTop_toBottomOf="@id/tv_ingredients"
-        app:layout_constraintBottom_toTopOf="@id/tv_instructions"/>
+        tools:layout_editor_absoluteX="-42dp" />
 
     <TextView
         android:id="@+id/tv_instructions"
@@ -32,7 +34,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rv_ingredients"
-        android:textSize="24sp"
+        android:textSize="30sp"
         android:text="INSTRUCTIONS"/>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -40,6 +42,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_instructions"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_instructions">
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

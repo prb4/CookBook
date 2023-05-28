@@ -12,24 +12,23 @@
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CustomFood"
+        android:theme="@style/splashScreenTheme"
         tools:targetApi="31">
         <activity
+            android:name=".Login"
+            android:exported="false" />
+        <activity
             android:name=".ui.Recipe"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:exported="false"/>
         <activity
             android:name=".CheckBox"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.CustomFood">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
