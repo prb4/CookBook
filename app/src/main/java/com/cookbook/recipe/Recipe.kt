@@ -33,7 +33,7 @@ class Recipe : AppCompatActivity() {
         val user_id : String? = intent.getStringExtra("EXTRA_USER_ID")
         val original_recipe: Boolean = intent.getBooleanExtra("EXTRA_ORIGINAL_RECIPE", true)
         val random : Boolean = intent.getBooleanExtra("EXTRA_RANDOM", false)
-        val save_button : Button = findViewById<Switch>(R.id.save_button)
+        //val save_button : Button = findViewById<Switch>(R.id.save_button)
 
         if (user_id != null) {
             getRecipe(this, whitelist, blacklist, user_id, original_recipe, random)
@@ -42,6 +42,7 @@ class Recipe : AppCompatActivity() {
         }
 
         //TODO - Keep dull'd out unless there is a log in
+        /*
         save_button.setOnClickListener{
             Log.d(TAG, "Save button clicked. ${recipeId} saving")
             GlobalScope.launch(Dispatchers.Main) {
@@ -52,7 +53,7 @@ class Recipe : AppCompatActivity() {
                 Log.d(TAG, "Recipe ${recipeId} was successfully saved: ${result.success.toString()}")
             }
         }
-
+         */
     }
 
     fun getRecipe(context: Context, whitelist: List<String>, blacklist: List<String>, userId: String, original_recipe: Boolean, random: Boolean) {
