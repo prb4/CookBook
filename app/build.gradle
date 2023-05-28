@@ -5,14 +5,14 @@ plugins {
 }
 
 android {
-    namespace 'com.example.customfood'
+    namespace 'com.cookbook'
     compileSdk 33
     buildFeatures{
         viewBinding true
     }
 
     defaultConfig {
-        applicationId "com.example.customfood"
+        applicationId "com.cookbook"
         minSdk 24
         targetSdk 33
         versionCode 1
