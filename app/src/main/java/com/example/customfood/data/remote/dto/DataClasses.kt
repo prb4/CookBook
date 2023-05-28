@@ -1,5 +1,6 @@
 package com.example.customfood.data.remote.dto
 
+import com.example.customfood.data.local.DataLocalOption
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -23,6 +24,8 @@ data class DataOption(
     constructor() : this("", mutableListOf<DataItem>(), "", "")
 }
 
+
+
 @Serializable
 data class DataItem(
     val image_name: String,
@@ -36,4 +39,9 @@ data class DataRecipe(
     val recipe: List<String>,
     val ingredients: List<String>,
     val id: String
+) : java.io.Serializable
+
+@Serializable
+data class DataSaveRecipe(
+    val success: Boolean,
 ) : java.io.Serializable

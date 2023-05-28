@@ -30,12 +30,14 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setTheme(R.style.Theme_CustomFood)
         setContent {
             Log.d(TAG, "Starting MainActivity")
             //TODO - change to AndroidX / callback variant
             //TODO - create onResume (ie: when phone layout changes.  Do we need to make a request each time?
 
             //Start recycler view stuff
+
             setContentView(R.layout.activity_main)
 
             val rvOptions = findViewById<RecyclerView>(R.id.rv_options)

@@ -25,6 +25,12 @@ interface IRestAPIService {
 
     suspend fun getImage(image: String): Bitmap
 
+    //TODO - userId should never be null
+    suspend fun saveRecipe(userId: String?, recipeId: String) : DataSaveRecipe
+
+    //TODO - userId should never be null
+    suspend fun deleteRecipe(userId: String?, recipeId: String) : DataSaveRecipe
+
     suspend fun getRecipe(
         ingredients: List<String>,
         ignoreIngredients: List<String>,

@@ -150,4 +150,23 @@ class RecipeServiceImplementation(
         }
     }
 
+    override suspend fun saveRecipe(userId: String?, recipeId: String) : DataSaveRecipe {
+        Log.d(TAG, "in saveRecipe")
+        return client.post {
+            url(HttpRoutes.SAVE)
+            port = HttpRoutes.PORT
+            parameter("userId", userId)
+            parameter("recipeId", recipeId)
+        }
+    }
+
+    override suspend fun deleteRecipe(userId: String?, recipeId: String) : DataSaveRecipe {
+        Log.d(TAG, "in deleteRecipe")
+        return client.delete {
+            url(HttpRoutes.SAVE)
+            port = HttpRoutes.PORT
+            parameter("userId", userId)
+            parameter("recipeId", recipeId)
+        }
+    }
 }

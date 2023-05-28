@@ -16,6 +16,7 @@ class CheckBox (): AppCompatActivity() {
         super.onCreate(savedInstanceState)
         //TODO - remove bar at top of screen
         Log.d(TAG, "In CheckBox activity")
+        setTheme(R.style.Theme_CustomFood)
         setContentView(R.layout.activity_check_box)
 
         val dataOption = intent.getSerializableExtra("EXTRA_OPTION") as DataOption

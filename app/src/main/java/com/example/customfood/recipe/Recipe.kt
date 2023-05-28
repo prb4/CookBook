@@ -1,20 +1,20 @@
 package com.example.customfood.ui
 
 import android.content.Context
+import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Adapter
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customfood.AdapterFoodType
 import com.example.customfood.AdapterRecipe
 import com.example.customfood.R
 import com.example.customfood.data.remote.dto.DataRecipe
+import com.example.customfood.data.remote.dto.DataSaveRecipe
 import com.example.customfood.data.remote.dto.IRestAPIService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,9 +22,12 @@ import kotlinx.coroutines.launch
 
 class Recipe : AppCompatActivity() {
     val TAG = "CustomFood - Recipe"
+    var recipeId : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        supportActionBar?.hide()
+        setTheme(R.style.Theme_CustomFood)
         setContentView(R.layout.activity_recipe)
 
         Log.d(TAG, "In onCreate: Recipe")
@@ -34,11 +37,24 @@ class Recipe : AppCompatActivity() {
         val user_id : String? = intent.getStringExtra("EXTRA_USER_ID")
         val original_recipe: Boolean = intent.getBooleanExtra("EXTRA_ORIGINAL_RECIPE", true)
         val random : Boolean = intent.getBooleanExtra("EXTRA_RANDOM", false)
+        val save_button : Button = findViewById<Switch>(R.id.save_button)
 
         if (user_id != null) {
             getRecipe(this, whitelist, blacklist, user_id, original_recipe, random)
         } else {
             Log.e(TAG, "User ID is None")
+        }
+
+        //TODO - Keep dull'd out unless there is a log in
+        save_button.setOnClickListener{
+            Log.d(TAG, "Save button clicked. ${recipeId} saving")
+            GlobalScope.launch(Dispatchers.Main) {
+                 val result : DataSaveRecipe =
+                    IRestAPIService.create()
+                        .saveRecipe(user_id, recipeId)
+
+                Log.d(TAG, "Recipe ${recipeId} was successfully saved: ${result.success.toString()}")
+            }
         }
 
     }
@@ -49,6 +65,8 @@ class Recipe : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.Main) {
             val result: DataRecipe =
                 IRestAPIService.create().getRecipe(whitelist, blacklist, userId, original_recipe, random)
+
+            recipeId = result.id
 
             // Update the UI with the result
             val rvInstructions = findViewById<RecyclerView>(R.id.rv_instructions)

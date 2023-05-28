@@ -9,4 +9,5 @@ object HttpRoutes {
     const val ITEM = "$BASE_URL/item"
     const val RECIPE = "$BASE_URL/recipe"
     const val IMAGE = "$BASE_URL/image"
+    const val SAVE = "$BASE_URL/save"
 }
