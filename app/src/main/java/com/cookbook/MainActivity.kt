@@ -15,6 +15,8 @@ import com.cookbook.data.remote.dto.DataItem
 import com.cookbook.data.remote.dto.DataOption
 import com.cookbook.R
 import com.cookbook.ui.Recipe
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity(), IFoodTypeItemClickListener {
         setTheme(R.style.Theme_CookBook)
         setContent {
             Log.d(TAG, "Starting MainActivity")
+            Firebase.analytics.logEvent("mainActivity", null)
             //TODO - change to AndroidX / callback variant
             //TODO - create onResume (ie: when phone layout changes.  Do we need to make a request each time?
 

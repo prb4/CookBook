@@ -1,15 +1,18 @@
 package com.cookbook
 
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cookbook.data.remote.dto.DataItem
 import com.cookbook.data.remote.dto.IRestAPIService
-import com.cookbook.R
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
+
 
 class AdapterFoodType(
     val options: List<DataFoodType>,
@@ -36,8 +39,11 @@ class AdapterFoodType(
         holder.itemView.setOnClickListener{
             //TODO - Seems like some clicks aren't registered. Maybe the click is landing on the textview?
             Log.d(TAG, "Clicked on ${options[position].title}")
+            val params = Bundle()
+            params.putString("option", options[position].title)
+            Firebase.analytics.logEvent("Food_option", params)
             var webRequests : List<DataItem>? = null
-            //var response: List<DataPostResponse>? = null
+            //var response: List<DataPostRespo nse>? = null
 
             //TODO - need to return out of this, or do a callback
             foodTypeClickListener.onFoodTypeItemClick(options[position].title)

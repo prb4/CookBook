@@ -21,9 +21,9 @@ class Recipe : AppCompatActivity() {
     var recipeId : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_CookBook)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
-        setTheme(R.style.Theme_CookBook)
         setContentView(R.layout.activity_recipe)
 
         Log.d(TAG, "In onCreate: Recipe")

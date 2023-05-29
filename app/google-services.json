@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "849768267488",
+    "project_id": "cookbook-9639f",
+    "storage_bucket": "cookbook-9639f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849768267488:android:ab009ff98c05f3db519a85",
+        "android_client_info": {
+          "package_name": "com.cookbook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD6JjekPBdAE5zQnhjiS8U9iUccQW7MXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
